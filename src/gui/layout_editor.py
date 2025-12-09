@@ -412,6 +412,25 @@ class LayoutSettingsPage(Adw.PreferencesPage):
                 env[key] = str(val)
         return env
 
+    def _on_refresh_joysticks_clicked(self, button, joystick_row):
+        """Refreshes the joystick list for a specific ComboRow."""
+        self.logger.info("Refreshing joystick list...")
+        selected_id = self._get_combo_row_device_id(
+            joystick_row, self.input_devices.get("joystick", [])
+        )
+
+        self.input_devices = self.device_manager.get_input_devices()
+        joysticks = self.input_devices.get("joystick", [])
+        self.logger.info(f"Found {len(joysticks)} joysticks.")
+
+        new_model = Gtk.StringList.new(["None"] + [d["name"] for d in joysticks])
+        joystick_row.set_model(new_model)
+
+        self._set_combo_row_selection(joystick_row, joysticks, selected_id)
+
+        self._on_setting_changed()
+
+
     def rebuild_player_rows(self):
         for row_dict in self.player_rows:
             self.players_group.remove(row_dict["expander"])
@@ -443,6 +462,11 @@ class LayoutSettingsPage(Adw.PreferencesPage):
                 return row
 
             joystick_row = create_device_row("Gamepad", "joystick")
+            refresh_button = Gtk.Button.new_from_icon_name("view-refresh-symbolic")
+            refresh_button.set_tooltip_text("Update device list")
+            refresh_button.get_style_context().add_class("flat")
+            refresh_button.connect("clicked", self._on_refresh_joysticks_clicked, joystick_row)
+            joystick_row.add_suffix(refresh_button)
             # mouse_row = create_device_row("Mouse", "mouse")
             # keyboard_row = create_device_row("Keyboard", "keyboard")
 
