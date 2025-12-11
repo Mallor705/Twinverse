@@ -51,7 +51,7 @@ class InstanceService:
         self.logger.info(f"Instance {instance_num}: Using isolated home path '{home_path}'")
 
         # Prepare minimal home structure - Steam will auto-install on first run
-        self._prepare_steam_home(home_path)
+        self._prepare_home(home_path)
 
         instance_idx = instance_num - 1
         device_info = self._validate_input_devices(profile, instance_idx, instance_num)
@@ -152,7 +152,7 @@ class InstanceService:
         del self.processes[instance_num]
         del self.pids[instance_num]
 
-    def _prepare_steam_home(self, home_path: Path) -> None:
+    def _prepare_home(self, home_path: Path) -> None:
         """
         Prepares the isolated Steam directories for the instance.
         This involves creating the directory structure and copying app manifests
@@ -160,18 +160,17 @@ class InstanceService:
         """
         self.logger.info(f"Preparing isolated Steam directories for instance at {home_path}...")
 
-        instance_steam_local = home_path / ".local/share/Steam"
-        instance_steam_dot_steam = home_path / ".steam"
+        sdbx_steam_local = home_path / ".local/share/Steam"
 
         # Create essential Steam directories within the instance's isolated path
-        (instance_steam_local / "steamapps").mkdir(parents=True, exist_ok=True)
-        instance_steam_dot_steam.mkdir(parents=True, exist_ok=True)
+        (sdbx_steam_local / "steamapps").mkdir(parents=True, exist_ok=True)
+        (sdbx_steam_local / "compatibilitytools.d").mkdir(parents=True, exist_ok=True)
 
         # Copy .acf (app manifest) files from the host to the instance.
         # This makes Steam recognize games as "installed" so it can find them
         # in the shared steamapps/common directory.
         host_steamapps = Path.home() / ".local/share/Steam/steamapps"
-        dest_steamapps = instance_steam_local / "steamapps"
+        dest_steamapps = sdbx_steam_local / "steamapps"
 
         if host_steamapps.exists():
             for acf_file in host_steamapps.glob("*.acf"):
@@ -191,7 +190,7 @@ class InstanceService:
 
         # Enable this if you experience system crashes and graphical glitches.
         env["ENABLE_GAMESCOPE_WSI"] = "0"
-        env["LD_PRELOAD"] = ""
+        # env["LD_PRELOAD"] = ""
         # Handle audio device assignment
         if device_info.get("audio_device_id_for_instance"):
             env["PULSE_SINK"] = device_info["audio_device_id_for_instance"]
@@ -298,7 +297,6 @@ class InstanceService:
             "-h", str(height),
             "-o", refresh_rate_str,  # Set the unfocused FPS limit
             "-r", refresh_rate_str,  # Set the focused FPS limit
-            # "--xwayland-count", "2",
             # "--mangoapp",
         ]
 
@@ -328,11 +326,8 @@ class InstanceService:
         This strategy uses the real user's home directory but mounts instance-specific
         Steam directories over the real ones to achieve isolation.
         """
-        real_home = Path.home()
-        instance_steam_local = home_path / ".local/share/Steam"
-        instance_steam_dot_steam = home_path / ".steam"
-        target_steam_local = real_home / ".local/share/Steam"
-        target_steam_dot_steam = real_home / ".steam"
+        orig_home = Path.home()
+        orig_local = orig_home / ".local"
 
         cmd = [
             "bwrap",
@@ -348,6 +343,7 @@ class InstanceService:
             "--new-session",
             "--tmpfs", "/tmp",
             "--bind", "/tmp/.X11-unix", "/tmp/.X11-unix",
+            "--share-net",
         ]
 
         # --- Device Isolation ---
@@ -375,23 +371,25 @@ class InstanceService:
             cmd.extend(["--dev-bind", "/dev/input/mice", "/dev/input/mice"])
         # --- End Device Isolation ---
 
-        # --- Steam Directory Isolation ---
+        # --- Home Directory Isolation ---
         # Mount the instance-specific directories over the real Steam locations
         cmd.extend([
-            "--bind", str(instance_steam_local), str(target_steam_local),
-            "--bind", str(instance_steam_dot_steam), str(target_steam_dot_steam),
+            "--bind", str(home_path), str(orig_home),
         ])
 
         # Mount host's common games and compatibility tools into the sandboxed Steam directory
-        host_steam_path = str(target_steam_local)
-        sandbox_steam_path = str(target_steam_local) # Same path, but it's now a mount point
+        host_steam_path = orig_local / "share/Steam"
+        sandbox_steam_path = orig_local / "share/Steam" # Same path, but it's now a mount point
 
         # Share games
-        common_path = Path(host_steam_path) / "steamapps/common"
-        if common_path.exists():
-            cmd.extend(["--bind", str(common_path), str(Path(sandbox_steam_path) / "steamapps/common")])
+        sandbox_common = Path(sandbox_steam_path) / "steamapps/common"
+        host_common = Path(host_steam_path) / "steamapps/common"
+        if host_common.exists():
+            for folder in host_common.iterdir():
+                if folder.is_dir():
+                    cmd.extend(["--bind", str(folder), str(sandbox_common / folder.name)])
 
-        # Share compatibility tools
+        # Share compatibilitytools
         host_compat = Path(host_steam_path) / "compatibilitytools.d"
         sandbox_compat = Path(sandbox_steam_path) / "compatibilitytools.d"
         if host_compat.exists():
@@ -399,7 +397,7 @@ class InstanceService:
             for folder in host_compat.iterdir():
                 if folder.is_dir() and folder.name not in ignore:
                     cmd.extend(["--bind", str(folder), str(sandbox_compat / folder.name)])
-        # --- End Steam Directory Isolation ---
+        # --- End Home Directory Isolation ---
 
         # Ensure custom ENV variables reach Steam inside the sandbox
         try:

@@ -33,6 +33,6 @@ class Config:
     @staticmethod
     def get_steam_home_path(instance_num: int) -> Path:
         """Returns the isolated Steam home path for a given instance."""
-        return Config.LOCAL_DIR / f"steam_home_{instance_num}"
+        return Config.LOCAL_DIR / f"home_{instance_num}"
 
     # `migrate_legacy_paths` removed — legacy migration is no longer performed.
