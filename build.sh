@@ -49,13 +49,13 @@ project_root = Path.cwd()
 
 # Define paths
 src_path = project_root / 'src'
-styles_path = src_path / 'gui' / 'styles'
+gui_path = src_path / 'gui'
 
-# Collect all CSS files and other style resources
+# Collect all CSS files from the gui directory
 css_files = []
-if styles_path.exists():
-    for css_file in styles_path.glob('*.css'):
-        css_files.append((str(css_file), 'src/gui/styles'))
+if gui_path.exists():
+    for css_file in gui_path.glob('style.css'):
+        css_files.append((str(css_file), 'src/gui'))
 
 # Collect other resource files if needed
 data_files = css_files
