@@ -8,13 +8,12 @@ import time
 from pathlib import Path
 from typing import List, Optional
 
-# import psutil
-
 from ..core.config import Config
 from ..core.exceptions import DependencyError, VirtualDeviceError
 from ..core.logger import Logger
 from ..models.profile import Profile, PlayerInstanceConfig
 from .virtual_device_service import VirtualDeviceService
+from .command_builder import CommandBuilder
 
 
 class InstanceService:
@@ -28,7 +27,6 @@ class InstanceService:
         self._virtual_joystick_checked: bool = False
         self.pids: dict[int, int] = {}
         self.processes: dict[int, subprocess.Popen] = {}
-        # self.cpu_count = psutil.cpu_count(logical=True)
         self.termination_in_progress = False
 
     def validate_dependencies(self, use_gamescope: bool = True) -> None:
@@ -57,11 +55,20 @@ class InstanceService:
         device_info = self._validate_input_devices(profile, instance_idx, instance_num)
 
         env = self._prepare_environment(profile, device_info, instance_num)
-        total_instances = profile.effective_num_players()
-        cmd = self._build_command(profile, device_info, instance_num, home_path, total_instances)
+        
+        command_builder = CommandBuilder(
+            self.logger,
+            profile,
+            device_info,
+            instance_num,
+            home_path,
+            self._virtual_joystick_path,
+        )
+        cmd = command_builder.build_command()
 
         log_file = Config.LOG_DIR / f"steam_instance_{instance_num}.log"
         self.logger.info(f"Launching instance {instance_num} (Log: {log_file})")
+        self.logger.info(f"Instance {instance_num}: Full command: {shlex.join(cmd)}")
 
         try:
             # Use 'script' command to capture all terminal output from nested processes
@@ -201,37 +208,6 @@ class InstanceService:
         self.logger.info(f"Instance {instance_num}: Final environment prepared.")
         return env
 
-    def _build_command(self, profile: Profile, device_info: dict, instance_num: int, home_path: Path, total_instances: int = 2) -> List[str]:
-        """
-        Builds the final command array in the correct order:
-        [taskset] -> [gamescope] -> [bwrap] -> [steam]  (when gamescope is enabled)
-        [taskset] -> [bwrap] -> [steam]                  (when gamescope is disabled)
-        """
-        instance_idx = instance_num - 1
-
-        # 1. Build the innermost steam command
-        steam_cmd = self._build_base_steam_command(instance_num, profile.use_gamescope)
-
-        # 2. Build the bwrap command, which will wrap the steam command
-        bwrap_cmd = self._build_bwrap_command(profile, instance_idx, device_info, instance_num, home_path)
-
-        # 3. Prepend bwrap to the steam command
-        final_cmd = bwrap_cmd + steam_cmd
-
-        # 4. Build the Gamescope command and prepend it (if enabled)
-        if profile.use_gamescope:
-            should_add_grab_flags = device_info.get("should_add_grab_flags", False)
-            gamescope_cmd = self._build_gamescope_command(profile, should_add_grab_flags, instance_num)
-
-            # Add the '--' separator before the command Gamescope will run
-            final_cmd = gamescope_cmd + ["--"] + final_cmd
-            self.logger.info(f"Instance {instance_num}: Launching with Gamescope")
-        else:
-            self.logger.info(f"Instance {instance_num}: Launching without Gamescope (bwrap only)")
-
-        self.logger.info(f"Instance {instance_num}: Full command: {shlex.join(final_cmd)}")
-        return final_cmd
-
     def _validate_input_devices(self, profile: Profile, instance_idx: int, instance_num: int) -> dict:
         """Validates input devices and returns information about them."""
         # Get specific player config
@@ -253,8 +229,6 @@ class InstanceService:
             )
             return None
 
-        # mouse_path = _validate_device(player_config.MOUSE_EVENT_PATH, "Mouse")
-        # keyboard_path = _validate_device(player_config.KEYBOARD_EVENT_PATH, "Keyboard")
         mouse_path = None
         keyboard_path = None
         joystick_path = _validate_device(player_config.PHYSICAL_DEVICE_ID, "Joystick")
@@ -270,147 +244,6 @@ class InstanceService:
             "audio_device_id_for_instance": audio_id if audio_id and audio_id.strip() else None,
             "should_add_grab_flags": player_config.grab_input_devices,
         }
-
-    def _build_gamescope_command(self, profile: Profile, should_add_grab_flags: bool, instance_num: int) -> List[str]:
-        """Builds the Gamescope command."""
-        width, height = profile.get_instance_dimensions(instance_num)
-        if not width or not height:
-            self.logger.error(f"Instance {instance_num}: Invalid dimensions. Aborting launch.")
-            return []
-
-        # Get refresh rate for the specific instance
-        instance_idx = instance_num - 1
-        refresh_rate = 60  # Default
-        if profile.player_configs and 0 <= instance_idx < len(profile.player_configs):
-            refresh_rate = profile.player_configs[instance_idx].refresh_rate
-        else:
-            self.logger.warning(f"Instance {instance_num}: Could not find player config, defaulting refresh rate to 60Hz.")
-
-        refresh_rate_str = str(refresh_rate)
-
-        cmd = [
-            "gamescope",
-            "-e",  # Enable Steam integration
-            "-W", str(width),
-            "-H", str(height),
-            "-w", str(width),
-            "-h", str(height),
-            "-o", refresh_rate_str,  # Set the unfocused FPS limit
-            "-r", refresh_rate_str,  # Set the focused FPS limit
-            # "--mangoapp",
-        ]
-
-        if not profile.is_splitscreen_mode:
-            cmd.extend(["-f", "--adaptive-sync"])
-        else:
-            cmd.append("-b") # Borderless
-
-        if should_add_grab_flags:
-            self.logger.info(f"Instance {instance_num}: Using dedicated mouse/keyboard. Grabbing input.")
-            cmd.extend(["--grab", "--force-grab-cursor"])
-
-        return cmd
-
-    def _build_base_steam_command(self, instance_num: int, use_gamescope: bool = True) -> List[str]:
-        """Builds the base steam command."""
-        if use_gamescope:
-            self.logger.info(f"Instance {instance_num}: Using Steam command with Gamescope flags.")
-            return ["steam", "-gamepadui"]
-        else:
-            self.logger.info(f"Instance {instance_num}: Using plain Steam command.")
-            return ["steam"]
-
-    def _build_bwrap_command(self, profile: Profile, instance_idx: int, device_info: dict, instance_num: int, home_path: Path) -> List[str]:
-        """
-        Builds the bwrap command for sandboxing.
-        This strategy uses the real user's home directory but mounts instance-specific
-        Steam directories over the real ones to achieve isolation.
-        """
-        orig_home = Path.home()
-        orig_local = orig_home / ".local"
-
-        cmd = [
-            "bwrap",
-            "--dev-bind", "/", "/",
-            "--dev-bind", "/dev", "/dev",
-            "--tmpfs", "/dev/shm",
-            "--proc", "/proc",
-            "--die-with-parent",
-            "--unshare-ipc",
-            "--unshare-pid",
-            "--unshare-uts",
-            "--unshare-cgroup",
-            "--new-session",
-            "--tmpfs", "/tmp",
-            "--bind", "/tmp/.X11-unix", "/tmp/.X11-unix",
-            "--share-net",
-        ]
-
-        # --- Device Isolation ---
-        cmd.extend(["--tmpfs", "/dev/input"])
-
-        joystick_path = device_info.get("joystick_path_str_for_instance")
-        # If the instance has no physical joystick, assign the virtual one if it exists
-        if not joystick_path and self._virtual_joystick_path:
-            self.logger.info(f"Instance {instance_num}: Assigning virtual joystick '{self._virtual_joystick_path}'.")
-            joystick_path = self._virtual_joystick_path
-
-        device_paths_to_bind = [
-            device_info.get("mouse_path_str_for_instance"),
-            device_info.get("keyboard_path_str_for_instance"),
-            joystick_path,
-        ]
-        for device_path in device_paths_to_bind:
-            if device_path:
-                self.logger.info(f"Instance {instance_num}: Exposing device '{device_path}' to sandbox.")
-                cmd.extend(["--dev-bind", device_path, device_path])
-
-        if Path("/dev/uinput").exists():
-            cmd.extend(["--dev-bind", "/dev/uinput", "/dev/uinput"])
-        if Path("/dev/input/mice").exists():
-            cmd.extend(["--dev-bind", "/dev/input/mice", "/dev/input/mice"])
-        # --- End Device Isolation ---
-
-        # --- Home Directory Isolation ---
-        # Mount the instance-specific directories over the real Steam locations
-        cmd.extend([
-            "--bind", str(home_path), str(orig_home),
-        ])
-
-        # Mount host's common games and compatibility tools into the sandboxed Steam directory
-        host_steam_path = orig_local / "share/Steam"
-        sandbox_steam_path = orig_local / "share/Steam" # Same path, but it's now a mount point
-
-        # Share games
-        sandbox_common = Path(sandbox_steam_path) / "steamapps/common"
-        host_common = Path(host_steam_path) / "steamapps/common"
-        if host_common.exists():
-            for folder in host_common.iterdir():
-                if folder.is_dir():
-                    cmd.extend(["--bind", str(folder), str(sandbox_common / folder.name)])
-
-        # Share compatibilitytools
-        host_compat = Path(host_steam_path) / "compatibilitytools.d"
-        sandbox_compat = Path(sandbox_steam_path) / "compatibilitytools.d"
-        if host_compat.exists():
-            ignore = {"LegacyRuntime"}
-            for folder in host_compat.iterdir():
-                if folder.is_dir() and folder.name not in ignore:
-                    cmd.extend(["--bind", str(folder), str(sandbox_compat / folder.name)])
-        # --- End Home Directory Isolation ---
-
-        # Ensure custom ENV variables reach Steam inside the sandbox
-        try:
-            extra_env = profile.get_env_for_instance(instance_idx) if hasattr(profile, "get_env_for_instance") else {}
-            for k, v in (extra_env or {}).items():
-                if v is None:
-                    v = ""
-                cmd.extend(["--setenv", str(k), str(v)])
-            if extra_env:
-                self.logger.info(f"Instance {instance_num}: Added {len(extra_env)} --setenv entries to bwrap.")
-        except Exception as e:
-            self.logger.error(f"Instance {instance_num}: Failed to add --setenv entries: {e}")
-        return cmd
 
     def terminate_all(self) -> None:
         """Terminates all managed steam instances."""

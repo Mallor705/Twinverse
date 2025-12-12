@@ -70,8 +70,6 @@ hidden_imports = [
     'gi.repository.GLib',
     'gi.repository.Gio',
     'pydantic',
-    'psutil',
-    'click',
     'cairo'
 ]
 

@@ -22,8 +22,7 @@ class PlayerInstanceConfig(BaseModel):
     USER_STEAM_ID: Optional[str] = Field(default=None, alias="USER_STEAM_ID")
     PHYSICAL_DEVICE_ID: Optional[str] = Field(default=None, alias="PHYSICAL_DEVICE_ID")
     grab_input_devices: bool = Field(default=False, alias="GRAB_INPUT_DEVICES")
-    # MOUSE_EVENT_PATH: Optional[str] = Field(default=None, alias="MOUSE_EVENT_PATH")
-    # KEYBOARD_EVENT_PATH: Optional[str] = Field(default=None, alias="KEYBOARD_EVENT_PATH")
+
     AUDIO_DEVICE_ID: Optional[str] = Field(default=None, alias="AUDIO_DEVICE_ID")
     monitor_id: Optional[str] = Field(default=None, alias="MONITOR_ID")
     env: Optional[Dict[str, str]] = Field(default=None, alias="ENV")
