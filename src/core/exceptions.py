@@ -1,4 +1,4 @@
-class LinuxCoopError(Exception):
+class MultiScopeError(Exception):
     """
     Base exception for all custom errors raised by the MultiScope application.
 
@@ -7,40 +7,20 @@ class LinuxCoopError(Exception):
     """
     pass
 
-class ProfileNotFoundError(LinuxCoopError):
+class ProfileNotFoundError(MultiScopeError):
     """
     Raised when a specified game profile `.json` file cannot be found.
     """
     pass
 
-class ProtonNotFoundError(LinuxCoopError):
-    """
-    Raised when a specified Proton version cannot be located in the standard
-    Steam library paths.
-    """
-    pass
-
-class DependencyError(LinuxCoopError):
+class DependencyError(MultiScopeError):
     """
     Raised when a required external dependency (e.g., `bwrap`, `gamescope`)
     is not found on the system's PATH.
     """
     pass
 
-class ExecutableNotFoundError(LinuxCoopError):
-    """
-    Raised when the game executable specified in a profile does not exist at
-    the configured path.
-    """
-    pass
-
-class GameNotFoundError(LinuxCoopError):
-    """
-    Raised when a specified game cannot be found in the library.
-    """
-    pass
-
-class VirtualDeviceError(LinuxCoopError):
+class VirtualDeviceError(MultiScopeError):
     """
     Raised when there is an error creating or managing a virtual device.
     """

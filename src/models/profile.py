@@ -16,10 +16,6 @@ class PlayerInstanceConfig(BaseModel):
     """
     model_config = ConfigDict(populate_by_name=True)
 
-    ACCOUNT_NAME: Optional[str] = Field(default=None, alias="ACCOUNT_NAME")
-    LANGUAGE: Optional[str] = Field(default=None, alias="LANGUAGE")
-    LISTEN_PORT: Optional[str] = Field(default=None, alias="LISTEN_PORT")
-    USER_STEAM_ID: Optional[str] = Field(default=None, alias="USER_STEAM_ID")
     PHYSICAL_DEVICE_ID: Optional[str] = Field(default=None, alias="PHYSICAL_DEVICE_ID")
     grab_input_devices: bool = Field(default=False, alias="GRAB_INPUT_DEVICES")
 
@@ -49,7 +45,6 @@ class Profile(BaseModel):
     """
     model_config = ConfigDict(populate_by_name=True, extra='ignore')
 
-    profile_name: str = Field(default="Default", alias="PROFILE_NAME")
     num_players: int = Field(default=2, alias="NUM_PLAYERS")
     instance_width: Optional[int] = Field(default=1280, alias="INSTANCE_WIDTH")
     instance_height: Optional[int] = Field(default=720, alias="INSTANCE_HEIGHT")
