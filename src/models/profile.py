@@ -109,7 +109,8 @@ class Profile(BaseModel):
         return base_env
 
     def get_instance_dimensions(self, instance_num: int) -> Tuple[Optional[int], Optional[int]]:
-        """Calculates instance dimensions, accounting for splitscreen."""
+        """Calculates instance dimensions, accounting for splitscreen.
+        For grupos de no máximo 4 instâncias, repete a lógica para cada grupo."""
         if not self.instance_width or not self.instance_height:
             return None, None
 
@@ -122,30 +123,32 @@ class Profile(BaseModel):
         if num_players < 1:
             return self.instance_width, self.instance_height
 
-        if num_players == 1:
+        # Lógica para grupos de até 4 instâncias
+        group_index = (instance_num - 1) // 4
+        instance_in_group = (instance_num - 1) % 4 + 1
+        num_players_in_group = min(4, num_players - group_index * 4)
+
+        if num_players_in_group == 1:
             return self.instance_width, self.instance_height
-        elif num_players == 2:
+        elif num_players_in_group == 2:
             if orientation == "vertical":
                 return self.instance_width // 2, self.instance_height
             else:
                 return self.instance_width, self.instance_height // 2
-        elif num_players == 3:
+        elif num_players_in_group == 3:
             if orientation == "vertical":
-                if instance_num == 1:
+                if instance_in_group == 1:
                     return self.instance_width // 2, self.instance_height
                 else:
                     return self.instance_width // 2, self.instance_height // 2
             else:
-                if instance_num == 1:
+                if instance_in_group == 1:
                     return self.instance_width, self.instance_height // 2
                 else:
                     return self.instance_width // 2, self.instance_height // 2
 
-        elif num_players == 4:
+        elif num_players_in_group == 4:
             return self.instance_width // 2, self.instance_height // 2
         else:
-            # Fallback for > 4 players, might not be visually ideal
-            if orientation == "vertical":
-                return self.instance_width, self.instance_height // num_players
-            else:
-                return self.instance_width // num_players, self.instance_height
+            # Fallback para casos inesperados
+            return self.instance_width, self.instance_height
