@@ -8,7 +8,6 @@ gi.require_version("Adw", "1")
 from ..services.device_manager import DeviceManager
 from ..services.verification_service import VerificationService
 from gi.repository import Adw, Gdk, GObject, Gtk
-
 from ..services.instance import InstanceService
 
 
@@ -108,6 +107,14 @@ class LayoutSettingsPage(Adw.PreferencesPage):
         self.orientation_row.connect("notify::selected-item", self._on_setting_changed)
         gamescope_expander.add_row(self.orientation_row)
 
+        self.kwin_script_row = Adw.SwitchRow(
+            title="Enable KWin Splitscreen Script",
+            subtitle="Automatically tile game windows using a KWin script"
+        )
+        self.kwin_script_row.get_style_context().add_class("kwin-script-row")
+        self.kwin_script_row.connect("notify::active", self._on_setting_changed)
+        gamescope_expander.add_row(self.kwin_script_row)
+
         # Global environment variables
         self.env_group = Adw.PreferencesGroup(title="Environment Variables (Global)")
         self.env_group.get_style_context().add_class("global-env-group")
@@ -151,6 +158,7 @@ class LayoutSettingsPage(Adw.PreferencesPage):
         self.orientation_row.set_visible(is_splitscreen)
 
         # Load gamescope setting
+        self.kwin_script_row.set_active(self.profile.enable_kwin_script)
         use_gamescope = self.profile.use_gamescope
         self.use_gamescope_row.set_active(use_gamescope)
         self.gamescope_settings_group.set_visible(use_gamescope)
@@ -215,6 +223,7 @@ class LayoutSettingsPage(Adw.PreferencesPage):
                     row_dict["grab_input"].set_sensitive(False)
 
         self._is_loading = False
+        self._update_kwin_switch_visibility()
 
     def _set_combo_row_selection(self, combo_row, device_list, device_id):
         if not device_id:
@@ -231,6 +240,11 @@ class LayoutSettingsPage(Adw.PreferencesPage):
             self.logger.error(f"Error matching device {device_id}: {e}")
 
         combo_row.set_selected(0)
+
+    def _update_kwin_switch_visibility(self):
+        use_gamescope = self.use_gamescope_row.get_active()
+        is_splitscreen = self.screen_mode_row.get_selected_item().get_string().lower() == "splitscreen"
+        self.kwin_script_row.set_visible(use_gamescope and is_splitscreen)
 
     def get_updated_data(self) -> Profile:
         self.profile.num_players = int(self.num_players_row.get_value())
@@ -253,6 +267,7 @@ class LayoutSettingsPage(Adw.PreferencesPage):
 
         # Save gamescope setting
         self.profile.use_gamescope = self.use_gamescope_row.get_active()
+        self.profile.enable_kwin_script = self.kwin_script_row.get_active()
 
         # Collect global environment variables
         self.profile.env = self._collect_env_from_rows(self.global_env_rows)
@@ -319,12 +334,14 @@ class LayoutSettingsPage(Adw.PreferencesPage):
     def _on_screen_mode_changed(self, combo_row, *args):
         is_splitscreen = combo_row.get_selected_item().get_string().lower() == "splitscreen"
         self.orientation_row.set_visible(is_splitscreen)
+        self._update_kwin_switch_visibility()
         if not self._is_loading:
             self.emit("settings-changed")
 
     def _on_gamescope_toggled(self, switch, *args):
         is_active = switch.get_active()
         self.gamescope_settings_group.set_visible(is_active)
+        self._update_kwin_switch_visibility()
         if not self._is_loading:
             self.emit("settings-changed")
 

@@ -1,21 +1,19 @@
 import sys
 import threading
 import time
-from pathlib import Path
-
 import gi
+from pathlib import Path
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
-
 from ..core.config import Config
 from ..core.exceptions import VirtualDeviceError
 from ..core.logger import Logger
 from ..models.profile import Profile
 from ..services.instance import InstanceService
-from ..services.kde_manager import KdePanelManager
+from ..services.kde_manager import KdeManager
 from .layout_editor import LayoutSettingsPage
 
 
@@ -28,7 +26,7 @@ class MultiScopeWindow(Adw.ApplicationWindow):
         self.logger = Logger("MultiScope-GUI", Config.LOG_DIR, reset=True)
         self.instance_service = InstanceService(logger=self.logger)
         self.profile = Profile.load()
-        self.kde_manager = KdePanelManager(self.logger)
+        self.kde_manager = KdeManager(self.logger)
 
         self._launch_thread = None
         self._cancel_launch_event = threading.Event()
@@ -171,6 +169,9 @@ class MultiScopeWindow(Adw.ApplicationWindow):
         self.profile.selected_players = selected_players
         self.profile.save() # Save selection before launching
 
+        if self.profile.enable_kwin_script:
+            self.kde_manager.start_kwin_script(self.profile)
+
         # KDE Panel Management
         self.kde_manager.save_panel_states()
         self.kde_manager.set_panels_dodge_windows()
@@ -193,6 +194,9 @@ class MultiScopeWindow(Adw.ApplicationWindow):
             # The worker will terminate running instances as it shuts down
 
         self.instance_service.terminate_all()
+
+        # Stop KWin script if it was started
+        self.kde_manager.stop_kwin_script()
 
         # KDE Panel Management
         self.kde_manager.restore_panel_states()

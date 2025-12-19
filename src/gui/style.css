@@ -31,21 +31,6 @@ AdwToolbarView > AdwHeaderBar:last-child {
 }
 
 
-/* Change the background color of the top header bar */
-/*
-.header-bar {
-    background-color: #1a1a1a;
-}
-*/
-
-/* Change the background color and font size of the footer bar */
-/*
-.footer-bar {
-    background-color: #1a1a1a;
-    font-size: 1.1em;
-}
-*/
-
 /* Change the color of the Launch and Stop buttons */
 
 .launch-button {
@@ -58,46 +43,6 @@ AdwToolbarView > AdwHeaderBar:last-child {
     color: white;
 }
 
-
-/* Change the background of the main setting groups */
-/*
-.general-layout-group,
-.global-env-group,
-.players-group {
-    background-color: #3d3d3d;
-}
-*/
-
-/* Change the font size and color of text entry fields */
-/*
-.instance-width-row,
-.instance-height-row {
-    font-size: 1.2em;
-    color: #aaffaa;
-}
-*/
-
-/* Change the style of dropdown menus */
-/*
-.resolution-row,
-.screen-mode-row,
-.orientation-row,
-.joystick-row,
-.mouse-row,
-.keyboard-row,
-.audio-row {
-    background-color: #4a4a4a;
-    border-radius: 5px;
-}
-*/
-
-/* Change the style of the player-specific expandable sections */
-/*
-.player-expander {
-    background-color: #333333;
-    border: 1px solid #555555;
-}
-*/
 
 /* Change the color of the "Remove" button icon */
 
@@ -130,10 +75,6 @@ AdwToolbarView > AdwHeaderBar:last-child {
 
 
 /* Change the style of the player checkboxes */
-
-/*.player-checkbox check {
-    background-color: #5a5a5a;
-}*/
 
 .player-checkbox check:checked {
     background-color: #1A9FFF;

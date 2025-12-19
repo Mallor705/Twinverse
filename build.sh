@@ -50,6 +50,7 @@ project_root = Path.cwd()
 # Define paths
 src_path = project_root / 'src'
 gui_path = src_path / 'gui'
+scripts_path = project_root / 'scripts'
 
 # Collect all CSS files from the gui directory
 css_files = []
@@ -57,8 +58,14 @@ if gui_path.exists():
     for css_file in gui_path.glob('style.css'):
         css_files.append((str(css_file), 'src/gui'))
 
+# Collect all JS scripts from the scripts directory
+js_files = []
+if scripts_path.exists():
+    for js_file in scripts_path.glob('*.js'):
+        js_files.append((str(js_file), 'scripts'))
+
 # Collect other resource files if needed
-data_files = css_files
+data_files = css_files + js_files
 
 # Add hidden imports for PyInstaller
 hidden_imports = [

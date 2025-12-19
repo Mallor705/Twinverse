@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-
 class Config:
     """
     Global MultiScope configurations.

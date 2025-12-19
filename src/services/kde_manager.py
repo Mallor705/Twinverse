@@ -2,12 +2,83 @@ import os
 import subprocess
 import json
 from ..core.logger import Logger
+from pathlib import Path
+from ..models.profile import Profile
+import pydbus
 
-class KdePanelManager:
+class KdeManager:
     def __init__(self, logger: Logger):
         self.logger = logger
         self.original_panel_states = {}
         self.qdbus_command = self._find_qdbus_command()
+        self.kwin_script_id = None
+
+    def start_kwin_script(self, profile: Profile):
+        """
+        Starts the KWin splitscreen script using D-Bus.
+        """
+        if not self.is_kde_desktop():
+            self.logger.warning("Not a KDE desktop, skipping KWin script.")
+            return
+
+        if not profile.is_splitscreen_mode or not profile.splitscreen:
+            self.logger.info("Not in splitscreen mode, skipping KWin script.")
+            return
+
+        orientation = profile.splitscreen.orientation
+        script_name = "kwin_gamescope_vertical.js" if orientation == "vertical" else "kwin_gamescope_horizontal.js"
+
+        script_path = Path(__file__).parent.parent.parent / "scripts" / script_name
+
+        self.logger.info(f"Attempting to load KWin script: {script_path}")
+
+        if not script_path.exists():
+            self.logger.error(f"KWin script not found at {script_path}")
+            return
+
+        try:
+            bus = pydbus.SessionBus()
+            kwin_proxy = bus.get("org.kde.KWin", "/Scripting")
+
+            self.logger.info("Loading KWin script via D-Bus...")
+            self.kwin_script_id = kwin_proxy.loadScript(str(script_path))
+            self.logger.info(f"KWin script loaded with ID: {self.kwin_script_id}.")
+
+            try:
+                self.logger.info("Attempting to explicitly start the script...")
+                kwin_proxy.start()
+                self.logger.info("KWin script started successfully.")
+            except Exception as e:
+                self.logger.warning(f"Could not explicitly start KWin script (this may be normal): {e}")
+
+        except Exception as e:
+            self.logger.error(f"Failed to load KWin script via D-Bus: {e}")
+
+    def stop_kwin_script(self):
+        """
+        Stops and unloads the KWin splitscreen script using its ID.
+        """
+        if not self.kwin_script_id:
+            self.logger.info("No KWin script ID to stop.")
+            return
+
+        try:
+            bus = pydbus.SessionBus()
+            kwin_proxy = bus.get("org.kde.KWin", "/Scripting")
+
+            self.logger.info(f"Unloading KWin script with ID: {self.kwin_script_id}...")
+            # Note: KWin's unloadScript might take the ID, but some docs suggest the object path.
+            # The pydbus proxy object should handle this correctly. Let's assume the ID is what's needed.
+            # Based on newer patterns, often the script object itself has a stop/unload method,
+            # but for this API, unloadScript on the main interface is the documented way.
+            kwin_proxy.unloadScript(str(self.kwin_script_id))
+
+            self.logger.info("KWin script unloaded successfully.")
+            self.kwin_script_id = None
+
+        except Exception as e:
+            self.logger.error(f"Failed to stop KWin script via D-Bus: {e}")
+
 
     def is_kde_desktop(self):
         """Check if the current desktop environment is KDE."""

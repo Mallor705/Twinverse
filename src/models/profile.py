@@ -1,10 +1,7 @@
 import json
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
-
-from pydantic import (BaseModel, ConfigDict, Field, ValidationError,
-                      validator)
-
+from pydantic import (BaseModel, ConfigDict, Field, ValidationError, validator)
 from ..core.config import Config
 from ..core.exceptions import ProfileNotFoundError
 from ..core.logger import Logger
@@ -50,6 +47,7 @@ class Profile(BaseModel):
     instance_height: Optional[int] = Field(default=720, alias="INSTANCE_HEIGHT")
     mode: Optional[str] = Field(default="fullscreen", alias="MODE")
     use_gamescope: bool = Field(default=True, alias="USE_GAMESCOPE")
+    enable_kwin_script: bool = Field(default=True, alias="ENABLE_KWIN_SCRIPT")
     splitscreen: Optional[SplitscreenConfig] = Field(default=None, alias="SPLITSCREEN")
     env: Optional[Dict[str, str]] = Field(default=None, alias="ENV")
     player_configs: List[PlayerInstanceConfig] = Field(default_factory=lambda: [PlayerInstanceConfig(), PlayerInstanceConfig()], alias="PLAYERS")
@@ -127,26 +125,27 @@ class Profile(BaseModel):
         if num_players == 1:
             return self.instance_width, self.instance_height
         elif num_players == 2:
-            if orientation == "horizontal":
+            if orientation == "vertical":
                 return self.instance_width // 2, self.instance_height
             else:
                 return self.instance_width, self.instance_height // 2
         elif num_players == 3:
-            if orientation == "horizontal":
-                if instance_num == 1:
-                    return self.instance_width, self.instance_height // 2
-                else:
-                    return self.instance_width // 2, self.instance_height // 2
-            else:
+            if orientation == "vertical":
                 if instance_num == 1:
                     return self.instance_width // 2, self.instance_height
                 else:
                     return self.instance_width // 2, self.instance_height // 2
+            else:
+                if instance_num == 1:
+                    return self.instance_width, self.instance_height // 2
+                else:
+                    return self.instance_width // 2, self.instance_height // 2
+
         elif num_players == 4:
             return self.instance_width // 2, self.instance_height // 2
         else:
             # Fallback for > 4 players, might not be visually ideal
-            if orientation == "horizontal":
+            if orientation == "vertical":
                 return self.instance_width, self.instance_height // num_players
             else:
                 return self.instance_width // num_players, self.instance_height
