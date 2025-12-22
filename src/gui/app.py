@@ -33,6 +33,7 @@ class MultiScopeWindow(Adw.ApplicationWindow):
 
         self._build_ui()
         self._update_launch_button_state()
+        self.connect("close-request", self.on_close_request)
 
     def _show_error_dialog(self, message):
         dialog = Adw.MessageDialog(
@@ -221,6 +222,24 @@ class MultiScopeWindow(Adw.ApplicationWindow):
         self.layout_settings_page.set_running_state(False)
         self.layout_settings_page._run_verification()
         self._update_launch_button_state()
+
+    def on_close_request(self, *args):
+        """Handle the window close request."""
+        self.logger.info("Close request received. Starting shutdown procedure.")
+        self.set_sensitive(False)
+        shutdown_thread = threading.Thread(target=self._shutdown_worker)
+        shutdown_thread.start()
+        return True
+
+    def _shutdown_worker(self):
+        """Worker function to terminate everything before closing."""
+        self.logger.info("Shutdown worker started.")
+        self.instance_service.terminate_all()
+        self.kde_manager.stop_kwin_script()
+        self.kde_manager.restore_panel_states()
+        self.logger.info("All services terminated. Exiting application.")
+        GLib.idle_add(self.get_application().quit)
+
 
 class MultiScopeApplication(Adw.Application):
     def __init__(self, **kwargs):

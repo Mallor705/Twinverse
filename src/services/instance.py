@@ -132,7 +132,22 @@ class InstanceService:
         Config.LOG_DIR.mkdir(parents=True, exist_ok=True)
         self._launch_single_instance(active_profile, instance_num)
 
-    def terminate_instance(self, instance_num: int) -> None:
+    def _run_fallback_terminators(self) -> None:
+        """Runs a series of pkill commands to ensure all related processes are terminated."""
+        self.logger.info("Running fallback process terminators...")
+        commands = [
+            # "pkill -9 -f multiscope 2>/dev/null || true",
+            "pkill -9 -f gamescope 2>/dev/null || true",
+            "pkill -9 -f wineserver 2>/dev/null || true",
+            "pkill -9 -f winedevice 2>/dev/null || true",
+        ]
+        for cmd in commands:
+            try:
+                subprocess.run(cmd, shell=True, check=False)
+            except Exception as e:
+                self.logger.error(f"Error running fallback terminator '{cmd}': {e}")
+
+    def terminate_instance(self, instance_num: int, run_fallbacks: bool = True) -> None:
         """Terminates a single Steam instance gracefully."""
         if instance_num not in self.processes:
             self.logger.warning(f"Attempted to terminate non-existent instance {instance_num}")
@@ -164,8 +179,13 @@ class InstanceService:
         if process.poll() is None:
             process.wait()
 
-        del self.processes[instance_num]
-        del self.pids[instance_num]
+        if run_fallbacks:
+            self._run_fallback_terminators()
+
+        if instance_num in self.processes:
+            del self.processes[instance_num]
+        if instance_num in self.pids:
+            del self.pids[instance_num]
 
     ## CLEAN HOME
     # def _cleanup_instance_home(self, instance_num: int) -> None:
@@ -273,11 +293,13 @@ class InstanceService:
             self.logger.info("Starting termination of all instances...")
 
             for instance_num in list(self.processes.keys()):
-                self.terminate_instance(instance_num)
+                self.terminate_instance(instance_num, run_fallbacks=False)
 
             self.logger.info("Instance termination complete.")
             self.pids.clear()
             self.processes.clear()
+
+            self._run_fallback_terminators()
 
             if self._virtual_joystick_path:
                 self.virtual_device.destroy_virtual_joystick()
