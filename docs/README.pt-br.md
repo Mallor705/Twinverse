@@ -1,116 +1,130 @@
-[English](../README.md) | [Português (Brasil)](./README.pt-br.md) | [Français](./README.fr.md) | [Español](./README.es.md)
+[English](../README.md) | [Español](./README.es.md)
 
 # MultiScope
 
-O **MultiScope** é uma ferramenta de código aberto para Linux que permite a criação e o gerenciamento de múltiplas sessões do gamescope da steam, possibilitando que vários jogadores joguem simultaneamente em um único computador.
+O **MultiScope** é uma ferramenta de código aberto para Linux que permite criar e gerenciar múltiplas instâncias do `gamescope` e `steam` simultaneamente. Isso possibilita que vários jogadores aproveitem sua biblioteca de jogos em um único computador, seja em tela dividida ou cada um com sua própria tela, além de saída de áudio e dispositivos de entrada dedicados.
 
 ---
 
-## Status do Projeto
+## ✨ Principais Funcionalidades
 
-O MultiScope está atualmente em desenvolvimento ativo, mas já é totalmente funcional para usuários com **placas de vídeo AMD**. Testes em hardware **NVIDIA** ainda não foram realizados, então a compatibilidade não é garantida.
+O MultiScope foi projetado para ser uma solução flexível para múltiplos jogos simultaneos no Linux. Aqui estão algumas de suas principais funcionalidades:
 
-- **Compatibilidade:**
-  - ✅ **AMD:** Totalmente compatível
-  - ⚠️ **NVIDIA:** Requer testes
-  - ⚠️ **Intel:** Requer testes
+1.  **Gerenciamento Simples de Múltiplas Instâncias:** Execute várias instâncias da steam simultaneamente, permitindo que você e seus amigos aproveitem suas bibliotecas de jogos separadamente.
+2.  **Atribuição de Hardware por Instância:** Atribua mouse, teclado e controle específicos para cada instância do jogo. (Mouse/Teclado só podem ser atribuídos a uma instância por vez)
+3.  **Canais de Áudio Dedicados:** Direcione o áudio de cada instância do jogo para um dispositivo de saída de áudio separado.
+4.  **Interface Gráfica Intuitiva (GUI):** Uma interface amigável que simplifica a configuração e o lançamento das suas sessões de jogo.
+5.  **Home Separada:** MultiScope permite que você tenha uma home nova e separada para cada instância, permitindo que você personalize suas configurações e arquivos individualmente. (Não interfere na sua Home padrão)
+6.  **Pasta de Jogos Compartilhada:** MultiScope permite que você compartilhe o diretório de jogos steam entre várias instâncias, economizando espaço em disco e facilitando a atualização de jogos. (Os usuários precisam ter o jogo em suas bibliotecas steam para que seja possível executá-lo)
+7.  **Use Qualquer Proton:** MultiScope permite que você use qualquer versão do Proton para executar seus jogos, incluindo protons personalizados como o [ProtonGE](https://github.com/GloriousEggroll/proton-ge-custom).
+8.  **Jogue o Que Quiser** A instancias não precisam se limitar a jogar o mesmo jogo, cada instancia pode jogar o jogo que quiser (desde que o usuario tenha o jogo em sua biblioteca steam)
 
-## O Problema que o MultiScope Resolve
+## 🎬 Demonstração
 
-Muitos jogadores que migram para o Linux sentem falta de ferramentas como o **Nucleus Coop**, que facilitam o multiplayer local em jogos que não o suportam nativamente. O MultiScope foi criado para preencher essa lacuna, oferecendo uma solução robusta e fácil de usar para que amigos e familiares possam jogar juntos no mesmo PC, mesmo que não tenham múltiplos computadores.
+`![Demonstração do MultiScope](URL_DO_GIF)`
 
-## Funcionalidades
+## ⚙️ Como Funciona
 
-- **Gerenciamento de Perfis:** Crie, edite e remova perfis para diferentes jogos e configurações.
-- **Interface Gráfica Amigável:** Uma interface intuitiva para gerenciar perfis e instâncias de jogos.
-- **Suporte a Múltiplas Telas:** Configure cada instância do jogo para rodar em uma tela específica.
-- **Configurações de Áudio:** Direcione o áudio de cada instância para diferentes dispositivos de saída.
-- **Suporte a Múltiplos Teclados e Mouses:** Atribua dispositivos de entrada específicos para cada jogador.
+O MultiScope orquestra múltiplas instâncias independentes da Steam, aproveitando tecnologias de sandboxing e gerenciamento de exibição do Linux. O objetivo principal é executar sessões separadas da Steam que não entrem em conflito umas com as outras, permitindo que diferentes usuários façam login e joguem simultaneamente sem que aja interferência entre os clientes steam.
 
-## Demonstração
+Aqui está a análise técnica dos componentes principais:
 
-*(Espaço reservado para screenshots, GIFs ou vídeos do MultiScope em ação. Para adicionar uma imagem, use a seguinte sintaxe:)*
-`![Descrição da Imagem](URL_DA_IMAGEM)`
+-   **Sandboxing com Bubblewrap:** Esta é a pedra angular do MultiScope. Para cada instância da Steam, o MultiScope usa o `bubblewrap` para criar um ambiente sandbox isolado. Uma função crítica deste sandbox é a criação de um diretório `home` único e separado para cada instância. Isso garante que cada sessão da Steam tenha sua própria configuração, caching de dados, arquivos de salvamento e credenciais de usuário, impedindo qualquer cruzamento de dados ou conflitos entre as instâncias ou com o usuario do sistema.
 
-## Instalação
+-   **Isolamento de Dispositivos de Entrada:** O `bubblewrap` cria um diretório `/dev/input` privado e vazio dentro da sandbox. Em seguida, ele usa `--dev-bind` para expor seletivamente *apenas* os dispositivos de entrada atribuídos (por exemplo, um teclado, mouse ou controle específico) nesse diretório privado. Este é o núcleo do isolamento de entrada: a instância da Steam em sandbox é fundamentalmente incapaz de ver quaisquer outros dispositivos de entrada além daqueles explicitamente atribuídos a ela.
 
-A forma mais simples de instalar o MultiScope é através do pacote de release, que cuidará de tudo para você.
+-   **Gerenciamento de Exibição com Gamescope:** O MultiScope inicia instâncias do cliente Steam. Para gerenciar como essas instâncias da Steam são exibidas, ele oferece a opção de usar o `gamescope` da Valve. Quando ativado, o `gamescope` atua como um micro-compositor, executando uma instância da Steam em um servidor de exibição aninhado e isolado. Isso permite um controle preciso sobre as janelas, resolução e configurações de desempenho para a sessão daquele jogador.
 
-1.  **Baixe a última release:**
-    Acesse a página de [Releases](https://github.com/Mallor705/MultiScope/releases) e baixe o arquivo `MultiScope.tar.gz`.
+-   **Redirecionamento de Áudio com Pipewire:** Para gerenciar o áudio, o MultiScope define variáveis de ambiente (`PULSE_SINK`) que instruem o servidor de áudio `pipewire` a rotear todo o áudio de uma instância específica em sandbox para um dispositivo de áudio dedicado. Isso permite que o áudio do jogo de cada jogador seja enviado para seu próprio fone de ouvido ou alto-falantes.
 
-2.  **Extraia o arquivo:**
+## 🚀 Status do Projeto
+
+O MultiScope está em desenvolvimento ativo, alguns bugs ainda podem ser encontrados.
+
+Sobre a compatibilidade, o MultiScope deve funcionar bem em sistemas que já conseguem executar o Gamescope e Steam normalmente, já que o funcionamento padrão deles não é alterado.
+
+Caso tenha problemas, sinta-se a vontade para compartilhar seu feedback e reportar bugs em [Issues](https://github.com/Mallor705/MultiScope/issues).
+
+## 📦 Instalação
+
+A maneira mais fácil e recomendada de usar o MultiScope é através da versão AppImage. Este arquivo único funciona na maioria das distribuições Linux modernas sem a necessidade de instalação no sistema.
+
+1.  **Baixe o AppImage mais recente:**
+    Acesse a página de [**Releases**](https://github.com/Mallor705/MultiScope/releases) e baixe o arquivo `.appimage` mais recente.
+
+2.  **Torne-o Executável:**
+    Após o download, clique com o botão direito no arquivo, vá para "Propriedades" e marque a caixa "Permitir a execução do arquivo como programa". Alternativamente, você pode usar o terminal:
     ```bash
-    tar -xzvf MultiScope.tar.gz
+    chmod +x MultiScope-*.AppImage
     ```
 
-3.  **Navegue para a pasta extraída:**
-    (O nome da pasta pode variar dependendo da versão da release)
-    ```bash
-    cd MultiScope-*
-    ```
+3.  **Execute o Aplicativo:**
+    Execute o appimage e aproveite. É isso!
 
-4.  **Execute o script de instalação:**
-    ```bash
-    ./install.sh
-    ```
+#### Integração de AppImage (Opcional)
 
-Após a instalação, você poderá encontrar o MultiScope no menu de aplicativos do seu sistema ou executá-lo pelo terminal com o comando `multi-scope gui`. O pacote também inclui um script `uninstall.sh` para remover a aplicação.
+Para uma melhor integração com o sistema (por exemplo, adicionar uma entrada no menu de aplicativos), você pode usar uma ferramenta como o **[Gear Lever](https://github.com/mijorus/gearlever)** para gerenciar seu AppImage.
 
-## Como Usar
+---
 
-1.  **Abra o MultiScope:** Inicie a aplicação pelo menu de aplicativos ou pelo terminal.
-2.  **Crie um Perfil:**
-    - Clique em "Adicionar Perfil".
-    - Dê um nome ao perfil (ex: "Stardew Valley - Jogador 1").
-    - Configure as opções de tela, áudio e dispositivos de entrada.
-    - Salve o perfil.
-3.  **Inicie um Jogo:**
-    - Selecione o perfil desejado.
-    - Clique em "Iniciar" para abrir o jogo com as configurações definidas.
+## 🛠️ Para Desenvolvedores
 
-## Construindo a Partir do Código-Fonte
+Se você deseja contribuir com o MultiScope ou executá-lo diretamente do código-fonte, siga as instruções abaixo.
 
-Se você é um desenvolvedor e deseja compilar o projeto manualmente, siga os passos abaixo:
+### Executando a Partir do Código-Fonte
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone https://github.com/Mallor705/MultiScope.git
-    cd MultiScope
-    ```
+O script `run.sh` oferece uma maneira rápida de configurar um ambiente local e executar o aplicativo. Ele criará automaticamente um ambiente virtual e instalará as dependências necessárias.
 
-2.  **Para executar diretamente do código-fonte:**
-    - Crie e ative um ambiente virtual:
-      ```bash
-      python3 -m venv .venv
-      source .venv/bin/activate
-      ```
-    - Instale as dependências:
-      ```bash
-      pip install -r requirements.txt
-      ```
-    - Execute a aplicação:
-      ```bash
-      ./run.sh
-      ```
-    
-3.  **Para compilar e instalar a partir do código-fonte:**
-    ```bash
-    ./build.sh
-    ./install.sh
-    ```
+```bash
+# Clone o repositório
+git clone https://github.com/Mallor705/MultiScope.git
+cd MultiScope
 
-## Como Contribuir
+# Execute o script de execução
+./run.sh
+```
 
-Agradecemos o seu interesse em contribuir com o MultiScope! Se você deseja ajudar, siga estas diretrizes:
+### Compilando a Partir do Código-Fonte
 
-1.  **Faça um Fork do Repositório:** Crie uma cópia do projeto na sua conta do GitHub.
-2.  **Crie uma Branch:** Crie uma branch para a sua nova funcionalidade ou correção (`git checkout -b minha-feature`).
-3.  **Faça as Alterações:** Implemente suas melhorias ou correções.
-4.  **Envie um Pull Request:** Abra um Pull Request detalhando as suas alterações.
+O script `build.sh` compila o aplicativo em um executável independente usando o PyInstaller. O binário final será colocado no diretório `dist/`.
 
-Toda contribuição é bem-vinda, desde correções de bugs até a implementação de novas funcionalidades.
+```bash
+./build.sh
+```
 
-## Licença
+### Empacotando um AppImage
 
-Este projeto está licenciado sob a **Licença Pública Geral GNU v3.0 (GPL-3.0)**. Para mais detalhes, consulte o arquivo [LICENSE](LICENSE).
+O script `package-appimage.sh` automatiza o processo de criação de um AppImage. Ele primeiro executa o script de compilação e, em seguida, usa o `linuxdeploy` para empacotar o aplicativo em um arquivo `.appimage` distribuível.
+
+```bash
+./package-appimage.sh
+```
+
+## 🤝 Como Contribuir
+
+Recebemos contribuições de todos! Se você estiver interessado em ajudar a melhorar o MultiScope, siga estes passos:
+
+1.  **Faça um Fork do Repositório:** Crie sua própria cópia do projeto no GitHub.
+2.  **Crie uma Branch:** Crie uma nova branch para sua funcionalidade ou correção de bug (`git checkout -b minha-feature-incrivel`).
+3.  **Faça Suas Alterações:** Implemente suas melhorias.
+4.  **Envie um Pull Request:** Abra um pull request detalhando suas alterações para revisão.
+
+## 📜 Licença
+
+Este projeto está licenciado sob a **Licença Pública Geral GNU v3.0 (GPL-3.0)**. Para mais detalhes, consulte o arquivo [LICENSE](../LICENSE).
+
+## ⚖️ Aviso Legal
+
+O MultiScope é um projeto independente de código aberto e não é afiliado, endossado por, ou de qualquer forma oficialmente conectado à Valve Corporation ou ao Steam.
+
+Esta ferramenta atua como uma camada de orquestração que aproveita tecnologias de sandboxing (`bubblewrap`) para executar múltiplas instâncias isoladas do cliente oficial do Steam. O MultiScope **não modifica, aplica patches, faz engenharia reversa ou altera** quaisquer arquivos do Steam ou seu funcionamento normal. Todas as instâncias do Steam iniciadas por esta ferramenta são as versões oficiais e não modificadas fornecidas pela Valve.
+
+Os usuários são os únicos responsáveis por cumprir os termos do Acordo de Assinante do Steam.
+
+## 🙏 Créditos
+
+Este projeto foi inspirado pelo trabalho de:
+
+-   [NaviVani-dev](https://github.com/NaviVani-dev) e seu script [dualscope.sh](https://gist.github.com/NaviVani-dev/9a8a704a31313fd5ed5fa68babf7bc3a).
+-   [Tau5](https://github.com/Tau5) e seu projeto [Co-op-on-Linux](https://github.com/Tau5/Co-op-on-Linux).
+-   [wunnr](https://github.com/wunnr) e seu projeto [Partydeck](https://github.com/wunnr/partydeck) (Recomendo usa-lo caso você esteja procurando uma abordagem mais próxima ao [Nucleus Co-op](https://github.com/SplitScreen-Me/splitscreenme-nucleus)).
