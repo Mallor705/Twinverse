@@ -128,4 +128,3 @@ This project was inspired by the work of:
 -   [NaviVani-dev](https://github.com/NaviVani-dev) and their script [dualscope.sh](https://gist.github.com/NaviVani-dev/9a8a704a31313fd5ed5fa68babf7bc3a).
 -   [Tau5](https://github.com/Tau5) and their project [Co-op-on-Linux](https://github.com/Tau5/Co-op-on-Linux).
 -   [wunnr](https://github.com/wunnr) and their project [Partydeck](https://github.com/wunnr/partydeck) (I recommend using it if you're looking for an approach closer to [Nucleus Co-op](https://github.com/SplitScreen-Me/splitscreenme-nucleus)).
-```
