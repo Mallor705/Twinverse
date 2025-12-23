@@ -1,3 +1,4 @@
+import logging
 import re
 import subprocess
 from typing import Dict, List
@@ -37,7 +38,11 @@ class DeviceManager:
                 check=True
             )
             return result.stdout.strip()
-        except subprocess.CalledProcessError:
+        except FileNotFoundError:
+            logging.error(f"Command not found: {command.split()[0]}")
+            return ""
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Command failed: '{command}' with error: {e.stderr.strip()}")
             return ""
 
     def _get_device_name_from_id(self, device_id_full: str) -> str:
@@ -82,20 +87,29 @@ class DeviceManager:
         }
         by_id_output = self._run_command("ls -l /dev/input/by-id/")
 
-        for line in by_id_output.splitlines():
-            match = re.match(r".*?\s+([^\s]+)\s+->\s+\.\.(/event\d+)", line)
-            if match:
-                device_name_id_raw = match.group(1)
-                full_path = f"/dev/input/by-id/{device_name_id_raw}"
-                human_name = self._get_device_name_from_id(full_path)
-                device = {"id": full_path, "name": human_name}
+        # A more specific regex to find symlinks to event devices.
+        device_pattern = re.compile(r"\s([^\s]+)\s+->\s+\.\./event\d+")
 
-                if "event-joystick" in device_name_id_raw:
-                    detected_devices["joystick"].append(device)
-                elif "event-mouse" in device_name_id_raw:
-                    detected_devices["mouse"].append(device)
-                elif "event-kbd" in device_name_id_raw:
-                    detected_devices["keyboard"].append(device)
+        for line in by_id_output.splitlines():
+            try:
+                match = device_pattern.search(line)
+                if match:
+                    device_name_id_raw = match.group(1)
+                    full_path = f"/dev/input/by-id/{device_name_id_raw}"
+                    human_name = self._get_device_name_from_id(full_path)
+                    device = {"id": full_path, "name": human_name}
+
+                    if "event-joystick" in device_name_id_raw:
+                        detected_devices["joystick"].append(device)
+                    elif "event-mouse" in device_name_id_raw:
+                        detected_devices["mouse"].append(device)
+                    elif "event-kbd" in device_name_id_raw:
+                        detected_devices["keyboard"].append(device)
+            except (IndexError, AttributeError) as e:
+                logging.warning(
+                    f"Could not parse input device line: '{line}'. Error: {e}"
+                )
+                continue
 
         for dev_type in detected_devices:
             detected_devices[dev_type] = sorted(
@@ -114,17 +128,23 @@ class DeviceManager:
         """
         audio_sinks = []
         pactl_output = self._run_command("pactl list sinks")
-        sink_id, desc, name = None, None, None
+        desc, name = None, None
 
         for line in pactl_output.splitlines():
-            if line.startswith("Sink #"):
-                if name:
-                    audio_sinks.append({"id": name, "name": desc or name})
-                sink_id, desc, name = line.split('#')[1], None, None
-            elif "Description:" in line:
-                desc = line.split(":", 1)[1].strip()
-            elif "Name:" in line:
-                name = line.split(":", 1)[1].strip()
+            try:
+                if line.startswith("Sink #"):
+                    if name:
+                        audio_sinks.append({"id": name, "name": desc or name})
+                    desc, name = None, None
+                elif "Description:" in line:
+                    desc = line.split(":", 1)[1].strip()
+                elif "Name:" in line:
+                    name = line.split(":", 1)[1].strip()
+            except (IndexError, AttributeError) as e:
+                logging.warning(
+                    f"Could not parse audio device line: '{line}'. Error: {e}"
+                )
+                continue
 
         if name:
             audio_sinks.append({"id": name, "name": desc or name})
@@ -145,10 +165,16 @@ class DeviceManager:
         connected_pattern = re.compile(r"^(\S+) connected.*")
 
         for line in xrandr_output.splitlines():
-            match = connected_pattern.match(line)
-            if match:
-                display_name = match.group(1)
-                if not display_name.lower().startswith("virtual"):
-                    display_outputs.append({"id": display_name, "name": display_name})
+            try:
+                match = connected_pattern.match(line)
+                if match:
+                    display_name = match.group(1)
+                    if not display_name.lower().startswith("virtual"):
+                        display_outputs.append({"id": display_name, "name": display_name})
+            except (IndexError, AttributeError) as e:
+                logging.warning(
+                    f"Could not parse display output line: '{line}'. Error: {e}"
+                )
+                continue
 
-        return sorted(display_outputs, key=lambda x: x['name']) 
+        return sorted(display_outputs, key=lambda x: x['name'])
