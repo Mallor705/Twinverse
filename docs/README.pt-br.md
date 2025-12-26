@@ -21,7 +21,7 @@ O MultiScope foi projetado para ser uma solução flexível para múltiplos jogo
 
 ## 🎬 Demonstração
 
-`![Demonstração do MultiScope](URL_DO_GIF)`
+[horizontal-demo.webm](https://github.com/user-attachments/assets/7f74342f-415f-4296-8dbf-1c66e8286092)
 
 ## ⚙️ Como Funciona
 
