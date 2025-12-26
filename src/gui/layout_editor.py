@@ -52,15 +52,15 @@ class LayoutSettingsPage(Adw.PreferencesPage):
         adjustment.connect("value-changed", self._on_num_players_changed)
         layout_group.add(self.num_players_row)
 
-        # Gamescope toggle
-        self.use_gamescope_row = Adw.SwitchRow(
-            title="Use Gamescope",
-            subtitle="Disable to run Steam directly in bwrap without Gamescope"
-        )
-        self.use_gamescope_row.get_style_context().add_class("use-gamescope-row")
-        self.use_gamescope_row.get_style_context().add_class("custom-switch")
-        self.use_gamescope_row.connect("notify::active", self._on_gamescope_toggled)
-        layout_group.add(self.use_gamescope_row)
+        # # Gamescope toggle
+        # self.use_gamescope_row = Adw.SwitchRow(
+        #     title="Use Gamescope",
+        #     subtitle="Disable to run Steam directly in bwrap without Gamescope"
+        # )
+        # self.use_gamescope_row.get_style_context().add_class("use-gamescope-row")
+        # self.use_gamescope_row.get_style_context().add_class("custom-switch")
+        # self.use_gamescope_row.connect("notify::active", self._on_gamescope_toggled)
+        # layout_group.add(self.use_gamescope_row)
 
         # Gamescope Screen Settings
         self.gamescope_settings_group = Adw.PreferencesGroup()
@@ -119,11 +119,11 @@ class LayoutSettingsPage(Adw.PreferencesPage):
         self._on_screen_mode_changed(self.screen_mode_row)
         self.orientation_row.set_visible(is_splitscreen)
 
-        # Load gamescope setting
-        self.profile.enable_kwin_script = True  # Always enable KWin script by default
-        use_gamescope = self.profile.use_gamescope
-        self.use_gamescope_row.set_active(use_gamescope)
-        self.gamescope_settings_group.set_visible(use_gamescope)
+        # # Load gamescope setting
+        # self.profile.enable_kwin_script = True  # Always enable KWin script by default
+        # use_gamescope = self.profile.use_gamescope
+        # self.use_gamescope_row.set_active(use_gamescope)
+        # self.gamescope_settings_group.set_visible(use_gamescope)
 
         if is_splitscreen and self.profile.splitscreen:
             orientation = self.profile.splitscreen.orientation.capitalize()
