@@ -2,8 +2,6 @@
 
 Welcome to the MultiScope guide! This document will walk you through the process of setting up and using the MultiScope application to run multiple Steam instances.
 
-[IMAGE]
-
 ## 1. Number of Instances
 
 First, you need to decide how many Steam instances you want to run. MultiScope supports up to 8 instances total.
@@ -13,7 +11,8 @@ First, you need to decide how many Steam instances you want to run. MultiScope s
 
 Use the numeric selector "Number of Instances" to set the desired amount.
 
-[IMAGE]
+<img width="708" height="127" alt="general_layout" src="https://github.com/user-attachments/assets/3a764b39-fccf-451d-b2c4-56661a9a344e" />
+
 
 ## 2. Screen Mode
 
@@ -21,6 +20,8 @@ You can choose between two screen modes:
 
 - **Fullscreen:** Each instance will run on a separate monitor.
 - **Splitscreen:** Instances will be arranged on a single monitor, either horizontally or vertically.
+
+<img width="708" height="204" alt="screen_settings" src="https://github.com/user-attachments/assets/d8b87c4c-3112-46a7-a85c-5ec35d7d043d" />
 
 ### Splitscreen Options
 
@@ -33,7 +34,8 @@ Positions and layouts adjust automatically based on the number of instances.
 
 Note: Instance auto-tiling only works with `KDE Plasma` environments.
 
-[IMAGE]
+<img width="1280" height="720" alt="horizontal-game" src="https://github.com/user-attachments/assets/15ba21f3-c1cc-4f3c-8b9c-7e54bebdb90a" />
+<img width="1280" height="720" alt="vertical-game" src="https://github.com/user-attachments/assets/28a4b3f2-8588-4e89-be28-6728decb7a25" />
 
 ## 3. Instance Configuration
 
@@ -45,7 +47,7 @@ For each instance, you can configure the following options:
 - **Refresh Rate:** Set the refresh rate for the instance. Useful if you want to cap FPS or use a specific refresh rate.
 - **Environment Variables:** Define specific environment variables for the instance.
 
-[IMAGE]
+<img width="637" height="448" alt="player_config" src="https://github.com/user-attachments/assets/d8aabe8a-c194-46b1-94d6-9edf106dc8c8" />
 
 ## 4. Starting an Instance
 
@@ -55,7 +57,7 @@ Each instance can be started individually via its **"Start"** button. To run mul
 
 Only instances that already have Steam installed can be launched with the **"Play"** button. You can verify this by the checkmark icon on the instance. If the icon is not present, install Steam by clicking that instance's **"Start"** button. This allows for quick and direct configuration, game, or application setup for a specific instance.
 
-[IMAGE]
+<img width="708" height="185" alt="instance_config" src="https://github.com/user-attachments/assets/aaec6105-babe-4017-a130-1877f2aaf8ef" />
 
 ## 5. Steam Big Picture Mode (Optional)
 
@@ -65,7 +67,7 @@ To do this, go to `Settings > Interface` and check the box for `Start Steam in B
 
 Repeat this process for all instances you wish to start in Big Picture Mode.
 
-[IMAGE]
+<img width="850" height="722" alt="bigpicture" src="https://github.com/user-attachments/assets/f9f3f4be-4322-4dfb-97f3-72aabe10bc9d" />
 
 ## 6. Play
 
@@ -73,11 +75,13 @@ When all your instances are configured and running, you can start playing! Each 
 
 Enjoy your gaming session!
 
-[IMAGE]
+# Optional
 
 ## 7. Applications (Optional)
 
 To add applications to your instance, go to `Add a Game` and click `Add a Non-Steam Game...`. Select the application you wish to add.
+
+<img width="364" height="142" alt="add-game" src="https://github.com/user-attachments/assets/7de6ce46-5ba4-4060-9d18-d718bc390053" />
 
 ### Why do this?
 
@@ -85,4 +89,9 @@ This allows you to run applications directly from the instance, enabling a uniqu
 
 A good example is [mangojuice](https://github.com/radiolamp/mangojuice); if you want to use it with custom settings, you will need to run and configure it for each instance individually.
 
-[IMAGE]
+## 8. Enviroment Variables (Global)
+
+It does the same as **Environment Variables** but for all instances at the same time.
+
+<img width="708" height="123" alt="env_var_global" src="https://github.com/user-attachments/assets/bf6d5437-feac-4f48-bfe3-5e5f8a355ad9" />
+
