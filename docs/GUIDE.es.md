@@ -43,6 +43,7 @@ Para cada instancia, puedes configurar las siguientes opciones:
 - **Capturar Mouse y Teclado:** Dedicar el mouse y el teclado a una sola instancia. Por ahora, solo una instancia a la vez puede usar el mouse y el teclado.
 - **Dispositivo de audio:** Seleccionar un dispositivo de salida de audio específico para la instancia.
 - **Tasa de actualización (Refresh Rate):** Definir la tasa de actualización para la instancia. Es útil si quieres limitar los FPS o usar una tasa de actualización específica.
+- **Variables de entorno (Environment Variables):** Definir variables de entorno específicas para la instancia.
 
 [IMAGEN]
 

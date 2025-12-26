@@ -43,6 +43,7 @@ For each instance, you can configure the following options:
 - **Capture Mouse & Keyboard:** Dedicate the mouse and keyboard to a single instance. For now, only one instance at a time can use the mouse and keyboard.
 - **Audio Device:** Select a specific audio output device for the instance.
 - **Refresh Rate:** Set the refresh rate for the instance. Useful if you want to cap FPS or use a specific refresh rate.
+- **Environment Variables:** Define specific environment variables for the instance.
 
 [IMAGE]
 

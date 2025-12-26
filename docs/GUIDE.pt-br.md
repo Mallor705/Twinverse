@@ -43,6 +43,7 @@ Para cada instância, você pode configurar as seguintes opções:
 - **Capturar Mouse e Teclado:** Dedicar o mouse e o teclado a uma única instância. Por enquanto, apenas uma instância por vez pode usar o mouse e o teclado.
 - **Dispositivo de Áudio:** Selecionar um dispositivo de saída de áudio específico para a instância.
 - **Taxa de Atualização (Refresh Rate):** Definir a taxa de atualização para a instância. Util se você quer travar o FPS ou usar uma taxa de atualização específica.
+- **Variável de Ambiente (Environment Variables):** Definir variáveis de ambiente específicas para a instância.
 
 [IMAGEM]
 
