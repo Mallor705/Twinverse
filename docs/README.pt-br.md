@@ -44,6 +44,10 @@ A maneira mais fácil e recomendada de usar o MultiScope é através da versão 
 
 Para uma melhor integração com o sistema (por exemplo, adicionar uma entrada no menu de aplicativos), você pode usar uma ferramenta como o **[Gear Lever](https://github.com/mijorus/gearlever)** para gerenciar seu AppImage.
 
+## Como Usar?
+
+Acesse nosso [Guia](./GUIDE.pt-br.md) para mais informações sobre como usar o MultiScope.
+
 ---
 
 ## 🚀 Status do Projeto

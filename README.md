@@ -44,6 +44,10 @@ The easiest and recommended way to use MultiScope is via the AppImage version. T
 
 For better system integration (e.g., adding a menu entry), you can use a tool like **[Gear Lever](https://github.com/mijorus/gearlever)** to manage your AppImage.
 
+## How to Use It?
+
+Access our [Guide](docs/GUIDE.md) for more information on how to use MultiScope.
+
 ---
 
 ## 🚀 Project Status

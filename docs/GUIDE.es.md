@@ -1,3 +1,5 @@
+[English](./GUIDE.md) | [Português](./GUIDE.pt-br.md)
+
 # Guía de MultiScope
 
 ¡Bienvenido a la guía de MultiScope! Este documento te guiará por el proceso de configuración y uso de la aplicación MultiScope para ejecutar múltiples instancias de Steam.

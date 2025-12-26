@@ -1,3 +1,5 @@
+[Português](./GUIDE.pt-br.md) | [Español](./GUIDE.es.md)
+
 # MultiScope Guide
 
 Welcome to the MultiScope guide! This document will walk you through the process of setting up and using the MultiScope application to run multiple Steam instances.
@@ -94,4 +96,3 @@ A good example is [mangojuice](https://github.com/radiolamp/mangojuice); if you 
 It does the same as **Environment Variables** but for all instances at the same time.
 
 <img width="708" height="123" alt="env_var_global" src="https://github.com/user-attachments/assets/bf6d5437-feac-4f48-bfe3-5e5f8a355ad9" />
-
