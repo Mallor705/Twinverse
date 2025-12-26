@@ -57,7 +57,7 @@ Solo las instancias que ya tienen Steam instalado pueden iniciarse con el botón
 
 [IMAGEN]
 
-## 5. Modo Big Picture de Steam
+## 5. Modo Big Picture de Steam (Opcional)
 
 Para una mejor experiencia, se recomienda activar el "Modo Big Picture" en la configuración de Steam. Esto proporcionará una interfaz amigable para controles, ideal para MultiScope.
 

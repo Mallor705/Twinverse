@@ -57,7 +57,7 @@ Only instances that already have Steam installed can be launched with the **"Pla
 
 [IMAGE]
 
-## 5. Steam Big Picture Mode
+## 5. Steam Big Picture Mode (Optional)
 
 For the best experience, it is recommended to enable "Big Picture Mode" in Steam's settings. This provides a controller-friendly interface, ideal for MultiScope.
 
