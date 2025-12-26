@@ -5,6 +5,7 @@
 O **MultiScope** é uma ferramenta de código aberto para Linux/SteamOS que permite criar e gerenciar múltiplas instâncias do `gamescope` e `steam` simultaneamente. Isso possibilita que vários jogadores aproveitem sua biblioteca de jogos em um único computador, seja em tela dividida ou cada um com sua própria tela, além de saída de áudio e dispositivos de entrada dedicados.
 
 ---
+<img width="800" height="729" alt="multiscope-ui" src="https://github.com/user-attachments/assets/aea8a9e3-7c11-4978-9141-572d2dce9613" />
 
 ## ✨ Principais Funcionalidades
 
@@ -22,28 +23,6 @@ O MultiScope foi projetado para ser uma solução flexível para múltiplos jogo
 ## 🎬 Demonstração
 
 [horizontal-demo.webm](https://github.com/user-attachments/assets/7f74342f-415f-4296-8dbf-1c66e8286092)
-
-## ⚙️ Como Funciona
-
-O MultiScope orquestra múltiplas instâncias independentes da Steam, aproveitando tecnologias de sandboxing e gerenciamento de exibição do Linux. O objetivo principal é executar sessões separadas da Steam que não entrem em conflito umas com as outras, permitindo que diferentes usuários façam login e joguem simultaneamente sem que aja interferência entre os clientes steam.
-
-Aqui está a análise técnica dos componentes principais:
-
--   **Sandboxing com Bubblewrap:** Esta é a pedra angular do MultiScope. Para cada instância da Steam, o MultiScope usa o `bubblewrap` para criar um ambiente sandbox isolado. Uma função crítica deste sandbox é a criação de um diretório `home` único e separado para cada instância. Isso garante que cada sessão da Steam tenha sua própria configuração, caching de dados, arquivos de salvamento e credenciais de usuário, impedindo qualquer cruzamento de dados ou conflitos entre as instâncias ou com o usuario do sistema.
-
--   **Isolamento de Dispositivos de Entrada:** O `bubblewrap` cria um diretório `/dev/input` privado e vazio dentro da sandbox. Em seguida, ele usa `--dev-bind` para expor seletivamente *apenas* os dispositivos de entrada atribuídos (por exemplo, um teclado, mouse ou controle específico) nesse diretório privado. Este é o núcleo do isolamento de entrada: a instância da Steam em sandbox é fundamentalmente incapaz de ver quaisquer outros dispositivos de entrada além daqueles explicitamente atribuídos a ela.
-
--   **Gerenciamento de Exibição com Gamescope:** O MultiScope inicia instâncias do cliente Steam. Para gerenciar como essas instâncias da Steam são exibidas, ele oferece a opção de usar o `gamescope` da Valve. Quando ativado, o `gamescope` atua como um micro-compositor, executando uma instância da Steam em um servidor de exibição aninhado e isolado. Isso permite um controle preciso sobre as janelas, resolução e configurações de desempenho para a sessão daquele jogador.
-
--   **Redirecionamento de Áudio com Pipewire:** Para gerenciar o áudio, o MultiScope define variáveis de ambiente (`PULSE_SINK`) que instruem o servidor de áudio `pipewire` a rotear todo o áudio de uma instância específica em sandbox para um dispositivo de áudio dedicado. Isso permite que o áudio do jogo de cada jogador seja enviado para seu próprio fone de ouvido ou alto-falantes.
-
-## 🚀 Status do Projeto
-
-O MultiScope está em desenvolvimento ativo, alguns bugs ainda podem ser encontrados.
-
-Sobre a compatibilidade, o MultiScope deve funcionar bem em sistemas que já conseguem executar o Gamescope e Steam normalmente, já que o funcionamento padrão deles não é alterado.
-
-Caso tenha problemas, sinta-se a vontade para compartilhar seu feedback e reportar bugs em [Issues](https://github.com/Mallor705/MultiScope/issues).
 
 ## 📦 Instalação
 
@@ -64,6 +43,32 @@ A maneira mais fácil e recomendada de usar o MultiScope é através da versão 
 #### Integração de AppImage (Opcional)
 
 Para uma melhor integração com o sistema (por exemplo, adicionar uma entrada no menu de aplicativos), você pode usar uma ferramenta como o **[Gear Lever](https://github.com/mijorus/gearlever)** para gerenciar seu AppImage.
+
+---
+
+## 🚀 Status do Projeto
+
+O MultiScope está em desenvolvimento ativo, alguns bugs ainda podem ser encontrados.
+
+Sobre a compatibilidade, o MultiScope deve funcionar bem em sistemas que já conseguem executar o Gamescope e Steam normalmente, já que o funcionamento padrão deles não é alterado.
+
+Caso tenha problemas, sinta-se a vontade para compartilhar seu feedback e reportar bugs em [Issues](https://github.com/Mallor705/MultiScope/issues).
+
+---
+
+## ⚙️ Como Funciona
+
+O MultiScope orquestra múltiplas instâncias independentes da Steam, aproveitando tecnologias de sandboxing e gerenciamento de exibição do Linux. O objetivo principal é executar sessões separadas da Steam que não entrem em conflito umas com as outras, permitindo que diferentes usuários façam login e joguem simultaneamente sem que aja interferência entre os clientes steam.
+
+Aqui está a análise técnica dos componentes principais:
+
+-   **Sandboxing com Bubblewrap:** Esta é a pedra angular do MultiScope. Para cada instância da Steam, o MultiScope usa o `bubblewrap` para criar um ambiente sandbox isolado. Uma função crítica deste sandbox é a criação de um diretório `home` único e separado para cada instância. Isso garante que cada sessão da Steam tenha sua própria configuração, caching de dados, arquivos de salvamento e credenciais de usuário, impedindo qualquer cruzamento de dados ou conflitos entre as instâncias ou com o usuario do sistema.
+
+-   **Isolamento de Dispositivos de Entrada:** O `bubblewrap` cria um diretório `/dev/input` privado e vazio dentro da sandbox. Em seguida, ele usa `--dev-bind` para expor seletivamente *apenas* os dispositivos de entrada atribuídos (por exemplo, um teclado, mouse ou controle específico) nesse diretório privado. Este é o núcleo do isolamento de entrada: a instância da Steam em sandbox é fundamentalmente incapaz de ver quaisquer outros dispositivos de entrada além daqueles explicitamente atribuídos a ela.
+
+-   **Gerenciamento de Exibição com Gamescope:** O MultiScope inicia instâncias do cliente Steam. Para gerenciar como essas instâncias da Steam são exibidas, ele oferece a opção de usar o `gamescope` da Valve. Quando ativado, o `gamescope` atua como um micro-compositor, executando uma instância da Steam em um servidor de exibição aninhado e isolado. Isso permite um controle preciso sobre as janelas, resolução e configurações de desempenho para a sessão daquele jogador.
+
+-   **Redirecionamento de Áudio com Pipewire:** Para gerenciar o áudio, o MultiScope define variáveis de ambiente (`PULSE_SINK`) que instruem o servidor de áudio `pipewire` a rotear todo o áudio de uma instância específica em sandbox para um dispositivo de áudio dedicado. Isso permite que o áudio do jogo de cada jogador seja enviado para seu próprio fone de ouvido ou alto-falantes.
 
 ---
 
