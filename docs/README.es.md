@@ -63,7 +63,7 @@ Si encuentras problemas, no dudes en compartir tus comentarios y reportar errore
 
 ## ⚙️ Cómo Funciona
 
-MultiScope orquesta múltiples instancias independientes de Steam aprovechando las tecnologías de aislamiento y gestión de pantalla de Linux. El objetivo principal es ejecutar sesiones separadas de Steam que no entren en conflicto entre sí, permitiendo que diferentes usuarios inicien sesión y jueguen simultáneamente sin interferencia entre los clientes de Steam.
+MultiScope utiliza **Bubblewrap (`bwrap`)**, una herramienta de sandbox de bajo nivel para Linux, para aislar cada instancia de Steam. Esto garantiza que las instancias no interfieran entre sí ni con el sistema principal del usuario. Además, la línea de comandos de `Gamescope` se genera dinámicamente según la configuración del usuario, involucrando el comando `bwrap`, que, a su vez, inicia `Steam`.
 
 ---
 
