@@ -121,11 +121,11 @@ class LayoutSettingsPage(Adw.PreferencesPage):
         self._on_screen_mode_changed(self.screen_mode_row)
         self.orientation_row.set_visible(is_splitscreen)
 
-        # # Load gamescope setting
-        # self.profile.enable_kwin_script = True  # Always enable KWin script by default
+        # Load gamescope setting
+        self.profile.enable_kwin_script = True  # Always enable KWin script by default
         # use_gamescope = self.profile.use_gamescope
         # self.use_gamescope_row.set_active(use_gamescope)
-        # self.gamescope_settings_group.set_visible(use_gamescope)
+        self.gamescope_settings_group.set_visible(True)
 
         if is_splitscreen and self.profile.splitscreen:
             orientation = self.profile.splitscreen.orientation.capitalize()
@@ -217,7 +217,7 @@ class LayoutSettingsPage(Adw.PreferencesPage):
             self.profile.splitscreen = None
 
         # Save gamescope setting
-        self.profile.use_gamescope = self.use_gamescope_row.get_active()
+        self.profile.use_gamescope = True       # Always enable Gamescope
         self.profile.enable_kwin_script = True  # Always enable KWin script
 
         # Collect global environment variables
