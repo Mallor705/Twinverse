@@ -64,8 +64,11 @@ class InstanceService:
         home_path.mkdir(parents=True, exist_ok=True)
         self.logger.info(f"Instance {instance_num}: Using isolated home path '{home_path}'")
 
+        # Prepare minimal home structure - Steam will auto-install on first run
         self._prepare_home(home_path)
+
         device_info = self._validate_input_devices(profile, instance_num, instance_num)
+
         env = self._prepare_environment(profile, device_info, instance_num)
 
         cmd_builder = CommandBuilder(
@@ -77,54 +80,30 @@ class InstanceService:
             home_path,
             self._virtual_joystick_path,
         )
-        cmd = cmd_builder.build_command()
+        base_command = cmd_builder.build_command()
 
-        # If running in Flatpak, use an inline script to launch on the host
+        cmd: List[str] = []
         if self.is_flatpak:
-            escaped_cmd = " ".join(shlex.quote(c) for c in cmd)
-            inline_script = f"""
-                set -m; 
-                {escaped_cmd} & 
-                PID=$!; 
-                PGID=$(ps -o pgid= -p $PID | tr -d ' '); 
-                echo $PGID; 
-                fg %1;
-            """
-            cmd = ["flatpak-spawn", "--host", "bash", "-c", inline_script]
+            cmd = ["flatpak-spawn", "--host"] + base_command
+        else:
+            cmd = base_command
 
         log_file = Config.LOG_DIR / f"steam_instance_{instance_num}.log"
         self.logger.info(f"Launching instance {instance_num} (Log: {log_file})")
         self.logger.info(f"Instance {instance_num}: Full command: {shlex.join(cmd)}")
 
         try:
-            # For Flatpak, we need to capture stdout to get the PGID
-            stdout_pipe = subprocess.PIPE if self.is_flatpak else subprocess.DEVNULL
-            
             process = subprocess.Popen(
                 cmd,
-                stdout=stdout_pipe,
+                stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 env=env,
-                cwd=Path.home(),
-                preexec_fn=os.setpgrp if not self.is_flatpak else None,
+                cwd=Path.home(),  # Launch from the user's real home directory
+                preexec_fn=os.setpgrp,
             )
-
-            if self.is_flatpak:
-                # Read the PGID from the host-launcher script
-                try:
-                    pgid_line = process.stdout.readline().decode().strip()
-                    self.pgids[instance_num] = int(pgid_line)
-                    self.logger.info(f"Instance {instance_num} started on host with PGID: {self.pgids[instance_num]}")
-                except (ValueError, IndexError) as e:
-                    self.logger.error(f"Failed to parse PGID for instance {instance_num}: {e}")
-                    raise
-            else:
-                self.pgids[instance_num] = os.getpgid(process.pid)
-            
             self.pids[instance_num] = process.pid
             self.processes[instance_num] = process
             self.logger.info(f"Instance {instance_num} started with PID: {process.pid}")
-
         except Exception as e:
             self.logger.error(f"Failed to launch instance {instance_num}: {e}")
 
@@ -177,7 +156,7 @@ class InstanceService:
 
         process = self.processes[instance_num]
         self.logger.info(f"Terminating instance {process.pid}...")
-        
+
         if process.poll() is None:
             pgid = self.pgids.get(instance_num)
             if pgid:

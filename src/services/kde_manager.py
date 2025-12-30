@@ -5,11 +5,13 @@ from ..core.logger import Logger
 from pathlib import Path
 from ..models.profile import Profile
 import pydbus
+from ..core.utils import is_flatpak, run_host_command
 
 class KdeManager:
     def __init__(self, logger: Logger):
         self.logger = logger
         self.original_panel_states = {}
+        self.is_flatpak = is_flatpak()
         self.qdbus_command = self._find_qdbus_command()
         self.kwin_script_id = None
 
@@ -38,22 +40,40 @@ class KdeManager:
             return
 
         try:
-            bus = pydbus.SessionBus()
-            kwin_proxy = bus.get("org.kde.KWin", "/Scripting")
+            if self.is_flatpak:
+                self.logger.info("Loading KWin script via flatpak-spawn...")
+                script_content = script_path.read_text()
+                
+                # Create a temporary file on the host
+                tmp_creator = run_host_command(['mktemp'], capture_output=True, text=True, check=True)
+                tmp_path = tmp_creator.stdout.strip()
 
-            self.logger.info("Loading KWin script via D-Bus...")
-            self.kwin_script_id = kwin_proxy.loadScript(str(script_path))
-            self.logger.info(f"KWin script loaded with ID: {self.kwin_script_id}.")
+                # Write the script content to the temporary file
+                run_host_command(['tee', tmp_path], input=script_content, text=True, check=True)
 
-            try:
+                # Load the script using qdbus
+                command = [self.qdbus_command, 'org.kde.KWin', '/Scripting', 'loadScript', tmp_path]
+                result = run_host_command(command, capture_output=True, text=True, check=True)
+                self.kwin_script_id = result.stdout.strip()
+                
+                # Start the script
+                start_command = [self.qdbus_command, 'org.kde.KWin', '/Scripting', 'start']
+                run_host_command(start_command, check=True)
+
+                # Clean up the temporary file
+                run_host_command(['rm', tmp_path], check=True)
+            else:
+                bus = pydbus.SessionBus()
+                kwin_proxy = bus.get("org.kde.KWin", "/Scripting")
+                self.logger.info("Loading KWin script via D-Bus...")
+                self.kwin_script_id = kwin_proxy.loadScript(str(script_path))
                 self.logger.info("Attempting to explicitly start the script...")
                 kwin_proxy.start()
-                self.logger.info("KWin script started successfully.")
-            except Exception as e:
-                self.logger.warning(f"Could not explicitly start KWin script (this may be normal): {e}")
+
+            self.logger.info(f"KWin script loaded and started with ID: {self.kwin_script_id}.")
 
         except Exception as e:
-            self.logger.error(f"Failed to load KWin script via D-Bus: {e}")
+            self.logger.error(f"Failed to load KWin script: {e}")
 
     def stop_kwin_script(self):
         """
@@ -64,21 +84,21 @@ class KdeManager:
             return
 
         try:
-            bus = pydbus.SessionBus()
-            kwin_proxy = bus.get("org.kde.KWin", "/Scripting")
-
-            self.logger.info(f"Unloading KWin script with ID: {self.kwin_script_id}...")
-            # Note: KWin's unloadScript might take the ID, but some docs suggest the object path.
-            # The pydbus proxy object should handle this correctly. Let's assume the ID is what's needed.
-            # Based on newer patterns, often the script object itself has a stop/unload method,
-            # but for this API, unloadScript on the main interface is the documented way.
-            kwin_proxy.unloadScript(str(self.kwin_script_id))
+            if self.is_flatpak:
+                self.logger.info(f"Unloading KWin script with ID: {self.kwin_script_id} via flatpak-spawn...")
+                command = [self.qdbus_command, 'org.kde.KWin', '/Scripting', 'unloadScript', str(self.kwin_script_id)]
+                run_host_command(command, check=True)
+            else:
+                bus = pydbus.SessionBus()
+                kwin_proxy = bus.get("org.kde.KWin", "/Scripting")
+                self.logger.info(f"Unloading KWin script with ID: {self.kwin_script_id}...")
+                kwin_proxy.unloadScript(str(self.kwin_script_id))
 
             self.logger.info("KWin script unloaded successfully.")
             self.kwin_script_id = None
 
         except Exception as e:
-            self.logger.error(f"Failed to stop KWin script via D-Bus: {e}")
+            self.logger.error(f"Failed to stop KWin script: {e}")
 
 
     def is_kde_desktop(self):
@@ -89,7 +109,11 @@ class KdeManager:
         """Find the correct qdbus command (qdbus or qdbus6)."""
         for cmd in ["qdbus6", "qdbus"]:
             try:
-                subprocess.run([cmd, "--version"], capture_output=True, check=True)
+                command = [cmd, "--version"]
+                if self.is_flatpak:
+                    run_host_command(command, capture_output=True, check=True)
+                else:
+                    subprocess.run(command, capture_output=True, check=True)
                 self.logger.info(f"Using '{cmd}' for dbus communication.")
                 return cmd
             except (subprocess.CalledProcessError, FileNotFoundError):
@@ -109,7 +133,10 @@ class KdeManager:
                 "org.kde.PlasmaShell.evaluateScript",
                 script,
             ]
-            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            if self.is_flatpak:
+                result = run_host_command(command, capture_output=True, text=True, check=True)
+            else:
+                result = subprocess.run(command, capture_output=True, text=True, check=True)
             return result.stdout.strip()
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Error executing qdbus script: {e}")
