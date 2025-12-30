@@ -24,9 +24,11 @@ echo "   ✅ Cache limpo"
 
 # Passo 3: Limpar arquivos de build
 echo "3️⃣  Limpar arquivos de build..."
-rm -rf build dist AppDir .venv squashfs-root linuxdeploy-plugin-gtk.sh
+rm -rf build dist AppDir .venv squashfs-root .flatpak-builder build-dir flatpak-repo
 rm -rf *.spec
 rm -rf *.AppImage
+rm -rf *.log
+rm -rf *.flatpak
 sleep 1
 echo "   ✅ Arquivos de build limpos"
 
