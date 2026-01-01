@@ -2,7 +2,8 @@ import os
 
 
 import subprocess
-from typing import List
+import shlex
+from typing import List, Dict
 
 def is_flatpak() -> bool:
     """Checks if the application is running inside a Flatpak."""
@@ -26,3 +27,20 @@ def run_host_command_async(command: List[str], **kwargs) -> subprocess.Popen:
     base_command = ["flatpak-spawn", "--host"]
     full_command = base_command + command
     return subprocess.Popen(full_command, **kwargs)
+
+def set_host_env_vars(env_vars: Dict[str, str]) -> None:
+    """
+    Sets environment variables on the host system when running in a Flatpak.
+    """
+    if not is_flatpak():
+        return
+
+    command_parts = []
+    for key, value in env_vars.items():
+        command_parts.append(f"export {key}={shlex.quote(value)}")
+    
+    command_string = "; ".join(command_parts)
+    
+    # We don't need to capture output or check for errors here.
+    # If the command fails, the Steam instance will likely fail to start with a clear error.
+    run_host_command(['sh', '-c', command_string], check=False)
