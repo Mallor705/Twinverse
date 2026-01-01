@@ -69,7 +69,8 @@ class InstanceService:
 
         device_info = self._validate_input_devices(profile, instance_num, instance_num)
 
-        env = self._prepare_environment(profile, device_info, instance_num)
+        # Get instance-specific environment variables
+        instance_env = self._prepare_environment(profile, device_info, instance_num)
 
         cmd_builder = CommandBuilder(
             self.logger,
@@ -90,16 +91,28 @@ class InstanceService:
             pgid = -1
 
             if self.is_flatpak:
+                # For Flatpak, prepend environment variables to the shell command
+                env_prefix_parts = []
+                for key, value in instance_env.items():
+                    env_prefix_parts.append(f"export {key}={shlex.quote(value)}")
+                env_prefix = "; ".join(env_prefix_parts) + "; " if env_prefix_parts else ""
+
                 escaped_command = shlex.join(base_command)
-                shell_command = f"set -m; echo $$; exec {escaped_command}"
+                shell_command = f"{env_prefix}set -m; echo $$; exec {escaped_command}"
 
                 self.logger.info(f"Instance {instance_num}: Launching on host via shell: {shell_command}")
+
+                # Prepare a clean environment for flatpak-spawn itself
+                flatpak_spawn_env = os.environ.copy()
+                flatpak_spawn_env.pop("PYTHONHOME", None)
+                flatpak_spawn_env.pop("PYTHONPATH", None)
+
 
                 process = run_host_command_async(
                     ["bash", "-c", shell_command],
                     stdout=subprocess.PIPE,  # Capture stdout to read the PGID
                     stderr=subprocess.DEVNULL,
-                    env=env,
+                    env=flatpak_spawn_env,
                     cwd=Path.home(),
                 )
 
@@ -121,13 +134,19 @@ class InstanceService:
                     raise RuntimeError(f"Failed to get host PGID for instance {instance_num}")
 
             else:
+                # For non-Flatpak, merge instance env with a clean version of the current environment
+                final_env = os.environ.copy()
+                final_env.pop("PYTHONHOME", None)
+                final_env.pop("PYTHONPATH", None)
+                final_env.update(instance_env)
+
                 # When not in Flatpak, launch the process directly and create a process group
                 self.logger.info(f"Instance {instance_num}: Full command: {shlex.join(base_command)}")
                 process = subprocess.Popen(
                     base_command,
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
-                    env=env,
+                    env=final_env,
                     cwd=Path.home(),
                     preexec_fn=os.setpgrp,
                 )
@@ -275,22 +294,20 @@ class InstanceService:
         self.logger.info("Isolated Steam directories are ready.")
 
     def _prepare_environment(self, profile: Profile, device_info: dict, instance_num: int) -> dict:
-        """Prepares a minimal environment for the Steam instance."""
-        env = os.environ.copy()
-        env.pop("PYTHONHOME", None)
-        env.pop("PYTHONPATH", None)
+        """Prepares a dictionary of environment variables for the Steam instance."""
+        env = {}
 
         # Enable this if you experience system crashes and graphical glitches.
         env["ENABLE_GAMESCOPE_WSI"] = "0"
-        # env["LD_PRELOAD"] = ""
+
         # Handle audio device assignment
         if device_info.get("audio_device_id_for_instance"):
             env["PULSE_SINK"] = device_info["audio_device_id_for_instance"]
             self.logger.info(f"Instance {instance_num}: Setting PULSE_SINK to '{device_info['audio_device_id_for_instance']}'.")
 
-        # Custom ENV variables are set via bwrap --setenv to target Steam directly.
+        # Custom ENV variables from the profile are set via bwrap --setenv, so we don't handle them here.
 
-        self.logger.info(f"Instance {instance_num}: Final environment prepared.")
+        self.logger.info(f"Instance {instance_num}: Environment variables prepared.")
         return env
 
     def _validate_input_devices(self, profile: Profile, instance_num: int, instance_num_display: int) -> dict:
