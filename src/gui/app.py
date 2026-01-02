@@ -59,10 +59,22 @@ class MultiScopeWindow(Adw.ApplicationWindow):
         self.layout_settings_page.connect("verification-completed", self._update_launch_button_state)
         self.toolbar_view.set_content(self.layout_settings_page)
 
-        # Footer Bar for Play/Stop buttons
-        self.footer_bar = Gtk.ActionBar()
-        self.footer_bar.get_style_context().add_class("footer-bar")
-        self.toolbar_view.add_bottom_bar(self.footer_bar)
+        # Footer Bar for Play/Stop buttons - Agora uma caixa comum
+        self.footer_bar = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=0,
+            margin_start=12,
+            margin_end=12,
+            margin_top=6,
+            margin_bottom=6,
+            homogeneous=False,
+            halign=Gtk.Align.END  # Alinha tudo à direita
+        )
+
+        # Adiciona um "spacer" expansível para empurrar o botão para direita
+        spacer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        spacer.set_hexpand(True)  # Expande horizontalmente
+        self.footer_bar.append(spacer)
 
         self.launch_button = Gtk.Button()
         self.launch_button.get_style_context().add_class("launch-button")
@@ -74,11 +86,19 @@ class MultiScopeWindow(Adw.ApplicationWindow):
         self.launch_spinner.set_spinning(False)
 
         self.launch_label = Gtk.Label(label="Play")
-        self.launch_content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6, hexpand=False, halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER)
+        self.launch_content_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=6,
+            hexpand=False,
+            halign=Gtk.Align.CENTER,
+            valign=Gtk.Align.CENTER
+        )
         self.launch_content_box.append(self.launch_label)
 
         self.launch_button.set_child(self.launch_content_box)
-        self.footer_bar.pack_end(self.launch_button)
+        self.footer_bar.append(self.launch_button)
+
+        self.toolbar_view.add_bottom_bar(self.footer_bar)
 
     def _trigger_auto_save(self, *args):
         updated_profile = self.layout_settings_page.get_updated_data()
