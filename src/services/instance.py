@@ -219,7 +219,7 @@ class InstanceService:
             if pgid:
                 if self.is_flatpak:
                     self.logger.info(f"Sending SIGTERM to host process group {pgid} for instance {instance_num}")
-                    run_host_command(["sh", "-c", f"kill -15 -- -{pgid}"])
+                    run_host_command(["sh", "-c", f"kill -15 -{pgid}"])
                 else:
                     try:
                         self.logger.info(f"Sending SIGTERM to process group {pgid} for instance {instance_num}")
@@ -234,7 +234,7 @@ class InstanceService:
                     self.logger.warning(f"Instance {instance_num} did not terminate after 10s. Sending SIGKILL.")
                     if self.is_flatpak:
                         try:
-                            run_host_command(["sh", "-c", f"kill -9 -- -{pgid}"])
+                            run_host_command(["sh", "-c", f"kill -9 -{pgid}"])
                         except Exception as e:
                             self.logger.warning(f"Failed to send SIGKILL to host PGID {pgid}: {e}")
 
