@@ -46,11 +46,6 @@
     <release version="0.9.0" date="2026-02-01">
       <description>
         <p>This is the first stable version of MultiScope, now with Flatpak and AppImage support.</p>
-        <ul>
-          <li>New feature: Profiles can now be edited.</li>
-          <li>New feature: Added a guide to help new users.</li>
-          <li>UI improvements and bug fixes.</li>
-        </ul>
       </description>
     </release>
   </releases>
