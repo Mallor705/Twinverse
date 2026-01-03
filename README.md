@@ -3,7 +3,7 @@
 # MultiScope
 
 <p align="center">
-  <img src="share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
+  <img src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@
 ---
 
 <p align="center">
-  <img width="850" height="650" alt="multiscope_ui" src="share/screenshots/multiscope-ui.png" />
+  <img width="850" height="650" alt="multiscope_ui" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/multiscope-ui.png" />
 </p>
 
 ## ✨ Key Features
@@ -40,9 +40,13 @@ MultiScope is designed as a flexible solution for simultaneous multi-gaming on L
 6. **Use Any Proton:** MultiScope lets you use any version of Proton to run your games, including custom protons like [ProtonGE](https://github.com/GloriousEggroll/proton-ge-custom).
 7. **Play What You Want:** Instances are not limited to playing the same game; each instance can play whichever game it wants (provided the user owns the game in their Steam library).
 
+---
+
 ## 🎬 Demo
 
 [horizontal-demo](https://github.com/user-attachments/assets/e0ca4937-fd38-48cf-b56c-1c825b047572)
+
+---
 
 ## 📦 Installation
 
@@ -165,6 +169,8 @@ We welcome contributions from everyone! If you are interested in helping improve
 3. **Make Your Changes:** Implement your improvements.
 4. **Submit a Pull Request:** Open a pull request detailing your changes for review.
 
+---
+
 ## 📜 License
 
 This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. For more details, see the [LICENSE](./LICENSE) file.
@@ -176,6 +182,8 @@ MultiScope is an independent open-source project and is not affiliated with, end
 This tool acts as an orchestration layer that leverages sandboxing technologies (`bubblewrap`) to run multiple isolated instances of the official Steam client. MultiScope **does not modify, patch, reverse engineer, or alter** any Steam files or its normal operation. All Steam instances launched by this tool are the official, unmodified versions provided by Valve.
 
 Users are solely responsible for complying with the terms of the Steam Subscriber Agreement.
+
+---
 
 ## 🙏 Credits
 

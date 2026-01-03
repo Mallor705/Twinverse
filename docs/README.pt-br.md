@@ -3,7 +3,7 @@
 # MultiScope
 
 <p align="center">
-  <img src="../share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
+  <img src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@ O **MultiScope** é uma ferramenta para Linux/SteamOS que permite criar e gerenc
 ---
 
 <p align="center">
-  <img width="850" height="650" alt="multiscope_ui" src="../share/screenshots/multiscope-ui.png" />
+  <img width="850" height="650" alt="multiscope_ui" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/multiscope-ui.png" />
 </p>
 
 ## ✨ Principais Funcionalidades
@@ -40,9 +40,13 @@ O MultiScope foi projetado para ser uma solução flexível para múltiplos jogo
 6.  **Use Qualquer Proton:** MultiScope permite que você use qualquer versão do Proton para executar seus jogos, incluindo protons personalizados como o [ProtonGE](https://github.com/GloriousEggroll/proton-ge-custom).
 7.  **Jogue o Que Quiser** A instancias não precisam se limitar a jogar o mesmo jogo, cada instancia pode jogar o jogo que quiser (desde que o usuario tenha o jogo em sua biblioteca steam)
 
+---
+
 ## 🎬 Demonstração
 
 [horizontal-demo](https://github.com/user-attachments/assets/e0ca4937-fd38-48cf-b56c-1c825b047572)
+
+---
 
 ## 📦 Instalação
 
@@ -159,6 +163,8 @@ Recebemos contribuições de todos! Se você estiver interessado em ajudar a mel
 3.  **Faça Suas Alterações:** Implemente suas melhorias.
 4.  **Envie um Pull Request:** Abra um pull request detalhando suas alterações para revisão.
 
+---
+
 ## 📜 Licença
 
 Este projeto está licenciado sob a **Licença Pública Geral GNU v3.0 (GPL-3.0)**. Para mais detalhes, consulte o arquivo [LICENSE](../LICENSE).
@@ -170,6 +176,8 @@ O MultiScope é um projeto independente de código aberto e não é afiliado, en
 Esta ferramenta atua como uma camada de orquestração que aproveita tecnologias de sandboxing (`bubblewrap`) para executar múltiplas instâncias isoladas do cliente oficial do Steam. O MultiScope **não modifica, aplica patches, faz engenharia reversa ou altera** quaisquer arquivos do Steam ou seu funcionamento normal. Todas as instâncias do Steam iniciadas por esta ferramenta são as versões oficiais e não modificadas fornecidas pela Valve.
 
 Os usuários são os únicos responsáveis por cumprir os termos do Acordo de Assinante do Steam.
+
+---
 
 ## 🙏 Créditos
 

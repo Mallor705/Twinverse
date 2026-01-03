@@ -3,7 +3,7 @@
 # MultiScope
 
 <p align="center">
-  <img src="../share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
+  <img src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@
 ---
 
 <p align="center">
-  <img width="850" height="650" alt="multiscope_ui" src="../share/screenshots/multiscope-ui.png" />
+  <img width="850" height="650" alt="multiscope_ui" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/multiscope-ui.png" />
 </p>
 
 ## ✨ Características Principales
@@ -40,9 +40,13 @@ MultiScope está diseñado como una solución flexible para jugar múltiples jue
 6.  **Usa Cualquier Proton:** MultiScope te permite usar cualquier versión de Proton para ejecutar tus juegos, incluyendo versiones personalizadas como [ProtonGE](https://github.com/GloriousEggroll/proton-ge-custom).
 7.  **Juega lo que Quieras:** Las instancias no están limitadas a jugar el mismo juego; cada instancia puede jugar el juego que desee (siempre que el usuario tenga el juego en su biblioteca de Steam).
 
+---
+
 ## 🎬 Demostración
 
 [horizontal-demo](https://github.com/user-attachments/assets/e0ca4937-fd38-48cf-b56c-1c825b047572)
+
+---
 
 ## 📦 Instalación
 
@@ -159,6 +163,8 @@ El script `package-flatpak.sh` automatiza el proceso de creación de un Flatpak.
 3.  **Haz tus Cambios:** Implementa tus mejoras.
 4.  **Envía un Pull Request:** Abre un "pull request" detallando tus cambios para revisión.
 
+---
+
 ## 📜 Licencia
 
 Este proyecto está bajo la **Licencia Pública General de GNU v3.0 (GPL-3.0)**. Para más detalles, consulta el archivo [LICENSE](../LICENSE).
@@ -170,6 +176,8 @@ MultiScope es un proyecto independiente de código abierto y no está afiliado, 
 Esta herramienta actúa como una capa de orquestación que aprovecha tecnologías de aislamiento (`bubblewrap`) para ejecutar múltiples instancias aisladas del cliente oficial de Steam. MultiScope **no modifica, parchea, realiza ingeniería inversa ni altera** ningún archivo de Steam o su funcionamiento normal. Todas las instancias de Steam lanzadas por esta herramienta son las versiones oficiales y no modificadas proporcionadas por Valve.
 
 Los usuarios son los únicos responsables de cumplir con los términos del Acuerdo de Suscriptor de Steam.
+
+---
 
 ## 🙏 Créditos
 
