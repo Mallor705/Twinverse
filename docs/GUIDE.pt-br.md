@@ -25,7 +25,7 @@ Primeiro, você precisa decidir quantas instâncias do Steam deseja executar. O 
 
 Use o seletor numérico "Número de Instâncias" para definir a quantidade desejada.
 
-<img width="708" height="127" alt="general_layout" src="https://github.com/user-attachments/assets/3a764b39-fccf-451d-b2c4-56661a9a344e" />
+<img width="708" height="127" alt="general-layout" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/general-layout.png" />
 
 ## 2. Modo de Tela
 
@@ -34,7 +34,7 @@ Você pode escolher entre dois modos de tela:
 - **Tela Cheia (Fullscreen):** Cada instância será executada em um monitor separado.
 - **Tela Dividida (Splitscreen):** As instâncias serão dispostas em um único monitor, seja horizontal ou verticalmente.
 
-<img width="708" height="204" alt="screen_settings" src="https://github.com/user-attachments/assets/d8b87c4c-3112-46a7-a85c-5ec35d7d043d" />
+<img width="708" height="204" alt="screen-settings" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/screen-settings.png" />
 
 ### Opções de Tela Dividida
 
@@ -47,8 +47,8 @@ Posições e formatos variam automaticamente de acordo com o número de instânc
 
 Nota: O auto-tiling das instâncias funciona apenas com ambientes `KDE Plasma`.
 
-<img width="1280" height="720" alt="horizontal-game" src="https://github.com/user-attachments/assets/15ba21f3-c1cc-4f3c-8b9c-7e54bebdb90a" />
-<img width="1280" height="720" alt="vertical-game" src="https://github.com/user-attachments/assets/28a4b3f2-8588-4e89-be28-6728decb7a25" />
+<img width="1280" height="720" alt="horizontal-game" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/horizontal-game.png" />
+<img width="1280" height="720" alt="vertical-game" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/vertical-game.png" />
 
 ## 3. Configuração da Instância
 
@@ -60,7 +60,7 @@ Para cada instância, você pode configurar as seguintes opções:
 - **Taxa de Atualização (Refresh Rate):** Definir a taxa de atualização para a instância. Util se você quer travar o FPS ou usar uma taxa de atualização específica.
 - **Variável de Ambiente (Environment Variables):** Definir variáveis de ambiente específicas para a instância.
 
-<img width="595" height="409" alt="player_config" src="https://github.com/user-attachments/assets/f6e38bea-1685-4d63-835a-464305b71cee" />
+<img width="595" height="409" alt="player-config" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/player-config.png" />
 
 ## 4. Iniciando uma Instância
 
@@ -70,7 +70,7 @@ Cada instância pode ser iniciada individualmente pelo seu botão **"Start"**. P
 
 Apenas instâncias que já possuem o Steam instalado podem ser iniciadas com o **"Play"**. Você pode verificar isso pelo ícone de visto (check) na instância. Se o ícone não estiver presente, instale o Steam clicando no botão **"Start"** daquela instância. Isso permite configurar, adicionar jogos ou aplicativos de maneira rápida e direta em uma instância específica.
 
-<img width="651" height="178" alt="instance_config" src="https://github.com/user-attachments/assets/9cff5635-1f4b-4571-bd5a-8816d9a59376" />
+<img width="651" height="178" alt="instance-config" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/instance-config.png" />
 
 ## 5. Modo Big Picture do Steam (Opicional)
 
@@ -80,7 +80,7 @@ Para fazer isso, vá em `Configurações > Interface` e marque a caixa para `Ini
 
 Repita esse processo para todas as instâncias que você deseja iniciar no Modo Big Picture.
 
-<img width="850" height="722" alt="bigpicture" src="https://github.com/user-attachments/assets/f9f3f4be-4322-4dfb-97f3-72aabe10bc9d" />
+<img width="850" height="722" alt="enable-bigpicture" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/enable-bigpicture.png" />
 
 ## 6. Jogar
 
@@ -105,7 +105,7 @@ Divirta-se em sua sessão de jogos!
 
 Para adicionar aplicativos à sua instância, vá em `Adicionar Jogo` e clique em `Adicionar um jogo não Steam...`. Selecione o aplicativo que deseja adicionar.
 
-<img width="364" height="142" alt="add-game" src="https://github.com/user-attachments/assets/7de6ce46-5ba4-4060-9d18-d718bc390053" />
+<img width="364" height="142" alt="add-game" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/add-game.png" />
 
 ### Por que fazer isso?
 
