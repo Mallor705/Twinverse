@@ -3,7 +3,7 @@
 # MultiScope
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/cca94b1c-f465-4f69-806b-4d853e432563" alt="MultiScope Logo" width="128" height="128">
+  <img src="../share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
 </p>
 
 <p align="center">
@@ -24,7 +24,9 @@ O **MultiScope** é uma ferramenta para Linux/SteamOS que permite criar e gerenc
 
 ---
 
-<img width="850" height="650" alt="multiscope_ui" src="https://github.com/user-attachments/assets/b4618997-7136-44b4-9398-7b0a569a641e" />
+<p align="center">
+  <img width="850" height="650" alt="multiscope_ui" src="../share/screenshots/multiscope-ui.png" />
+</p>
 
 ## ✨ Principais Funcionalidades
 
@@ -40,7 +42,12 @@ O MultiScope foi projetado para ser uma solução flexível para múltiplos jogo
 
 ## 🎬 Demonstração
 
-[horizontal-demo.webm](https://github.com/user-attachments/assets/7f74342f-415f-4296-8dbf-1c66e8286092)
+<p align="center">
+  <video width="1920" height="1080" controls>
+    <source src="../share/videos/horizontal-demo.webm" type="video/webm">
+    Seu navegador não suporta o elemento de vídeo.
+  </video>
+</p>
 
 ## 📦 Instalação
 
