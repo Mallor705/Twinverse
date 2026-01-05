@@ -2,10 +2,15 @@
 
 set -e # Exit on any error
 
+# Get the directory where the script is located and go to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_ROOT"
+
 echo "🚀 Starting AppImage packaging process..."
 
 # 1. Build the project
-./build.sh
+./scripts/build.sh
 
 # 2. Download linuxdeploy
 echo "📥 Downloading linuxdeploy..."

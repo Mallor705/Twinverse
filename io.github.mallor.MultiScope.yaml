@@ -49,7 +49,6 @@ modules:
       # Copy source files
       - mkdir -p /app/lib/multiscope
       - cp -r src /app/lib/multiscope/
-      - cp -r scripts /app/lib/multiscope/
       - cp -r res /app/lib/multiscope/
       - cp multiscope.py /app/lib/multiscope/
 

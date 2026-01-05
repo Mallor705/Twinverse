@@ -132,25 +132,25 @@ cd MultiScope
 
 ### Compilando a Partir do Código-Fonte
 
-O script `build.sh` compila o aplicativo em um executável independente usando o PyInstaller. O binário final será colocado no diretório `dist/`.
+O script `scripts/build.sh` compila o aplicativo em um executável independente usando o PyInstaller. O binário final será colocado no diretório `dist/`.
 
 ```bash
-./build.sh
+./scripts/build.sh
 ```
 
 ### Empacotando um AppImage
 
-O script `package-appimage.sh` automatiza o processo de criação de um AppImage. Ele primeiro executa o script de compilação e, em seguida, usa o `linuxdeploy` para empacotar o aplicativo em um arquivo `.appimage` distribuível.
+O script `scripts/package-appimage.sh` automatiza o processo de criação de um AppImage. Ele primeiro executa o script de compilação e, em seguida, usa o `linuxdeploy` para empacotar o aplicativo em um arquivo `.appimage` distribuível.
 
 ```bash
-./package-appimage.sh
+./scripts/package-appimage.sh
 ```
 
 ### Empacotando um Flatpak
-O script `package-flatpak.sh` automatiza o processo de criação de um Flatpak. Ele irá construir o aplicativo e, em seguida, empacotá-lo em um arquivo `.flatpak`.
+O script `scripts/package-flatpak.sh` automatiza o processo de criação de um Flatpak. Ele irá construir o aplicativo e, em seguida, empacotá-lo em um arquivo `.flatpak`.
 
 ```bash
-./package-flatpak.sh
+./scripts/package-flatpak.sh
 ```
 
 

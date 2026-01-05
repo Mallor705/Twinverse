@@ -5,13 +5,14 @@
 
 set -e  # Exit on any error
 
-./clean.sh
+./scripts/clean.sh
 
 echo "🚀 Starting MultiScope Build Process..."
 
-# Get script directory
+# Get the directory where the script is located and go to project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_ROOT"
 
 # Check if virtual environment exists
 if [ ! -d ".venv" ]; then
@@ -70,27 +71,16 @@ src_path = project_root / 'src'
 gui_path = src_path / 'gui'
 scripts_path = project_root / 'scripts'
 
-# Collect all CSS files from the res/styles directory
-css_files = []
-styles_path = project_root / 'res' / 'styles'
-if styles_path.exists():
-    for css_file in styles_path.glob('*.css'):
-        css_files.append((str(css_file), 'res/styles'))
+# Include entire src and res directories
+src_files = []
+for src_file in (project_root / 'src').rglob('*'):
+    if src_file.is_file():
+        src_files.append((str(src_file), 'src'))
 
-# Collect all JS scripts from the scripts directory
-js_files = []
-if scripts_path.exists():
-    for js_file in scripts_path.glob('*.js'):
-        js_files.append((str(js_file), 'scripts'))
-
-# Collect GResource file
-gresource_files = []
-gresource_file = project_root / 'res' / 'compiled.gresource'
-if gresource_file.exists():
-    gresource_files.append((str(gresource_file), 'res'))
-    print(f"  ✓ Found: {gresource_file}")
-else:
-    print(f"  ✗ Missing: {gresource_file}")
+res_files = []
+for res_file in (project_root / 'res').rglob('*'):
+    if res_file.is_file():
+        res_files.append((str(res_file), 'res'))
 
 # Get GObject Introspection typelib path
 try:
@@ -157,7 +147,7 @@ except:
     print("Warning: Could not detect GTK library path")
 
 # Collect other resource files
-data_files = css_files + js_files + gresource_files + typelib_files
+data_files = src_files + res_files + typelib_files
 
 # Add hidden imports for PyInstaller
 hidden_imports = [

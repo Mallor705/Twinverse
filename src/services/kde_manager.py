@@ -31,7 +31,7 @@ class KdeManager:
             orientation = profile.splitscreen.orientation
             script_name = "kwin_gamescope_vertical.js" if orientation == "vertical" else "kwin_gamescope_horizontal.js"
 
-        script_path = Path(__file__).parent.parent.parent / "scripts" / script_name
+        script_path = Path(__file__).parent.parent.parent / "res" / "kwin" / script_name
 
         self.logger.info(f"Attempting to load KWin script: {script_path}")
 
