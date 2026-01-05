@@ -80,7 +80,9 @@ for src_file in (project_root / 'src').rglob('*'):
 res_files = []
 for res_file in (project_root / 'res').rglob('*'):
     if res_file.is_file():
-        res_files.append((str(res_file), 'res'))
+        # Preserve the relative path within the res directory
+        rel_path = res_file.relative_to(project_root / 'res')
+        res_files.append((str(res_file), f'res/{rel_path.parent}'))
 
 # Get GObject Introspection typelib path
 try:
