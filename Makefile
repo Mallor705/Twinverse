@@ -27,10 +27,10 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  make version"
-	@echo "  make update-version NEW_VERSION=1.2.3"
+	@echo "  make update-version v=x.y.z"
 	@echo "  make bump-patch"
 	@echo "  make release-major"
-	@echo "  make release-custom NEW_VERSION=2.1.5"
+	@echo "  make release-custom v=x.y.z"
 
 # Show current version
 version:
