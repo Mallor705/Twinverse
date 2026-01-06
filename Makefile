@@ -128,21 +128,19 @@ endif
 	if [ "$$current_version" = "$(NEW_VERSION)" ]; then \
 		echo "Version is already $(NEW_VERSION)"; \
 	else \
-		$(MAKE) check-deps; \
-		$(MAKE) git-status; \
-		echo "Creating custom release..."; \
-		echo "Updating version from $$current_version to $(NEW_VERSION)"; \
-		python scripts/version_manager.py $(NEW_VERSION); \
-		echo "Committing version changes"; \
-
-		git add $(VERSION_FILE) share/metainfo/io.github.mallor.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.Twinverse.yaml scripts/package-flatpak.sh; \
-		git commit -m "Bump version to $(v)"; \
-		git tag "v$(v)"; \
-		echo "Release $(v) created successfully!"; \
-
-		echo "To push changes and tag, run:"; \
-		echo "  git push origin main"; \
-		echo "  git push origin v$(NEW_VERSION)"; \
+		$(MAKE) check-deps && \
+		$(MAKE) git-status && \
+		echo "Creating custom release..." && \
+		echo "Updating version from $$current_version to $(v)" && \
+		python scripts/version_manager.py $(v) && \
+		echo "Committing version changes" && \
+		git add $(VERSION_FILE) share/metainfo/io.github.mallor.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.Twinverse.yaml scripts/package-flatpak.sh && \
+		git commit -m "Bump version to $(v)" && \
+		git tag "v$(v)" && \
+		echo "Release $(v) created successfully!" && \
+		echo "To push changes and tag, run:" && \
+		echo "  git push origin main" && \
+		echo "  git push origin v$(v)"; \
 	fi
 
 # Increment major version
