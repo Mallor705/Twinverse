@@ -25,7 +25,7 @@ O **Twinverse** é uma ferramenta para Linux/SteamOS que permite criar e gerenci
 ---
 
 <p align="center">
-  <img width="850" height="650" alt="twinverse_ui" src="https://raw.githubusercontent.com/Mallor705/Twinverse/master/share/screenshots/twinverse-ui.png" />
+  <img alt="twinverse_ui" src="https://raw.githubusercontent.com/Mallor705/Twinverse/master/share/screenshots/twinverse-ui.png" />
 </p>
 
 ## ✨ Principais Funcionalidades
