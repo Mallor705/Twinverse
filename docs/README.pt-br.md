@@ -1,4 +1,7 @@
-[English](../README.md) | [Español](./README.es.md)
+<p align="right">
+  <a href="https://github.com/mall0r/Twinverse/blob/master/README.md"><img src="https://img.shields.io/badge/English-🇬🇧-darkblue.svg" alt="English"/></a>
+  <a href="https://github.com/mall0r/Twinverse/blob/master/docs/README.es.md"><img src="https://img.shields.io/badge/Español-🇪🇸-darkred.svg" alt="Spanish"/></a>
+</p>
 
 # Twinverse
 
