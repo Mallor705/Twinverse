@@ -1,4 +1,4 @@
-# Makefile for MultiScope versioning and build operations
+# Makefile for Twinverse versioning and build operations
 
 # Variables
 VERSION_FILE = version
@@ -9,7 +9,7 @@ VERSION = $(shell cat $(VERSION_FILE))
 
 # Show help
 help:
-	@echo "MultiScope Makefile - Version and build management"
+	@echo "Twinverse Makefile - Version and build management"
 	@echo ""
 	@echo "Available targets:"
 	@echo "  help              - Show this help"
@@ -73,7 +73,7 @@ release-major: check-deps git-status
 	echo "Updating version from $$current_version to $$new_version"; \
 	python scripts/version_manager.py $$new_version; \
 	echo "Committing version changes"; \
-	git add $(VERSION_FILE) share/metainfo/io.github.mallor.MultiScope.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.MultiScope.yaml scripts/package-flatpak.sh; \
+	git add $(VERSION_FILE) share/metainfo/io.github.mallor.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.Twinverse.yaml scripts/package-flatpak.sh; \
 	git commit -m "Bump version to $$new_version"; \
 	git tag "v$$new_version"; \
 	echo "Release $$new_version created successfully!"; \
@@ -92,7 +92,7 @@ release-minor: check-deps git-status
 	echo "Updating version from $$current_version to $$new_version"; \
 	python scripts/version_manager.py $$new_version; \
 	echo "Committing version changes"; \
-	git add $(VERSION_FILE) share/metainfo/io.github.mallor.MultiScope.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.MultiScope.yaml scripts/package-flatpak.sh; \
+	git add $(VERSION_FILE) share/metainfo/io.github.mallor.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.Twinverse.yaml scripts/package-flatpak.sh; \
 	git commit -m "Bump version to $$new_version"; \
 	git tag "v$$new_version"; \
 	echo "Release $$new_version created successfully!"; \
@@ -111,7 +111,7 @@ release-patch: check-deps git-status
 	echo "Updating version from $$current_version to $$new_version"; \
 	python scripts/version_manager.py $$new_version; \
 	echo "Committing version changes"; \
-	git add $(VERSION_FILE) share/metainfo/io.github.mallor.MultiScope.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.MultiScope.yaml scripts/package-flatpak.sh; \
+	git add $(VERSION_FILE) share/metainfo/io.github.mallor.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.Twinverse.yaml scripts/package-flatpak.sh; \
 	git commit -m "Bump version to $$new_version"; \
 	git tag "v$$new_version"; \
 	echo "Release $$new_version created successfully!"; \
@@ -134,10 +134,12 @@ endif
 		echo "Updating version from $$current_version to $(NEW_VERSION)"; \
 		python scripts/version_manager.py $(NEW_VERSION); \
 		echo "Committing version changes"; \
-		git add $(VERSION_FILE) share/metainfo/io.github.mallor.MultiScope.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.MultiScope.yaml scripts/package-flatpak.sh; \
-		git commit -m "Bump version to $(NEW_VERSION)"; \
-		git tag "v$(NEW_VERSION)"; \
-		echo "Release $(NEW_VERSION) created successfully!"; \
+
+		git add $(VERSION_FILE) share/metainfo/io.github.mallor.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mallor.Twinverse.yaml scripts/package-flatpak.sh; \
+		git commit -m "Bump version to $(v)"; \
+		git tag "v$(v)"; \
+		echo "Release $(v) created successfully!"; \
+
 		echo "To push changes and tag, run:"; \
 		echo "  git push origin main"; \
 		echo "  git push origin v$(NEW_VERSION)"; \

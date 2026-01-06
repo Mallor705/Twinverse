@@ -4,7 +4,7 @@ from src import Config
 
 def main():
     """
-    Main entry point for the MultiScope application.
+    Main entry point for the Twinverse application.
     """
     run_gui()
 

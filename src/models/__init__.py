@@ -1,4 +1,4 @@
-"""Data models for MultiScope."""
+"""Data models for Twinverse."""
 
 from .instance import SteamInstance
 from .profile import PlayerInstanceConfig, Profile, SplitscreenConfig

@@ -18,13 +18,13 @@ from src.services import KdeManager
 from src.gui.layout_editor import LayoutSettingsPage
 
 
-class MultiScopeWindow(Adw.ApplicationWindow):
+class TwinverseWindow(Adw.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.set_title("MultiScope")
+        self.set_title("Twinverse")
         self.set_default_size(800, 600)
 
-        self.logger = Logger("MultiScope-GUI", Config.LOG_DIR, reset=True)
+        self.logger = Logger("Twinverse-GUI", Config.LOG_DIR, reset=True)
         self.profile = Profile.load()
         self.kde_manager = KdeManager(self.logger)
         self.instance_service = InstanceService(logger=self.logger, kde_manager=self.kde_manager)
@@ -244,9 +244,9 @@ class MultiScopeWindow(Adw.ApplicationWindow):
         GLib.idle_add(self.get_application().quit)
 
 
-class MultiScopeApplication(Adw.Application):
+class TwinverseApplication(Adw.Application):
     def __init__(self, **kwargs):
-        super().__init__(application_id="io.github.mallor.MultiScope", **kwargs)
+        super().__init__(application_id="io.github.mallor.Twinverse", **kwargs)
         self.base_path = Utils.get_base_path()
 
         # Load resources
@@ -258,7 +258,7 @@ class MultiScopeApplication(Adw.Application):
         self.connect("activate", self.on_activate)
 
     def on_activate(self, app):
-        self.win = MultiScopeWindow(application=app)
+        self.win = TwinverseWindow(application=app)
 
         css_provider = Gtk.CssProvider()
         css_path = self.base_path / "res" / "styles" / "style.css"
@@ -281,5 +281,5 @@ def run_gui():
     style_manager = Adw.StyleManager.get_default()
     style_manager.set_color_scheme(Adw.ColorScheme.PREFER_DARK)
 
-    app = MultiScopeApplication()
+    app = TwinverseApplication()
     app.run(sys.argv)

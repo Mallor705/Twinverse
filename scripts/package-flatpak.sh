@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# MultiScope Professional Flatpak Build Script
+# Twinverse Professional Flatpak Build Script
 set -euo pipefail
 
 # ===== CONFIGURATION =====
-readonly APP_ID="io.github.mallor.MultiScope"
+readonly APP_ID="io.github.mallor.Twinverse"
 readonly MANIFEST="$APP_ID.yaml"
 readonly BUILD_DIR="build-dir"
 readonly REPO_DIR="flatpak-repo"
-readonly BUNDLE_NAME="MultiScope.flatpak"
+readonly BUNDLE_NAME="Twinverse.flatpak"
 
 # ===== FUNCTIONS =====
 print_header() {
@@ -133,12 +133,12 @@ create_bundle() {
     print_header "Creating Bundle"
 
     # ★ FIX: Read version from metainfo.xml file ★
-    local metainfo_path="share/metainfo/io.github.mallor.MultiScope.metainfo.xml"
+    local metainfo_path="share/metainfo/io.github.mallor.Twinverse.metainfo.xml"
     local version
     version=$(grep -oP '<release version="\K[^"]+' "$metainfo_path" | head -1)
 
     # Bundle name with extracted version
-    local final_bundle="MultiScope-${version:-unknown}.flatpak"
+    local final_bundle="Twinverse-${version:-unknown}.flatpak"
 
     echo "📦 Creating: $final_bundle"
     echo "📄 Version source: $metainfo_path"
@@ -169,14 +169,14 @@ create_bundle() {
 test_build() {
     print_header "Testing Build"
 
-    # Test using the real binary name (multiscope) instead of App ID
-    if timeout 5s flatpak-builder --run "$BUILD_DIR" "$MANIFEST" "multiscope" --help >/dev/null 2>&1; then
+    # Test using the real binary name (twinverse) instead of App ID
+    if timeout 5s flatpak-builder --run "$BUILD_DIR" "$MANIFEST" "twinverse" --help >/dev/null 2>&1; then
         print_success "Build tested successfully"
-    elif timeout 5s flatpak-builder --run "$BUILD_DIR" "$MANIFEST" "multiscope" >/dev/null 2>&1; then
+    elif timeout 5s flatpak-builder --run "$BUILD_DIR" "$MANIFEST" "twinverse" >/dev/null 2>&1; then
         print_success "Build tested (ran without arguments)"
     else
         # Alternative test: just check if files exist
-        if [[ -f "$BUILD_DIR/files/bin/multiscope" ]]; then
+        if [[ -f "$BUILD_DIR/files/bin/twinverse" ]]; then
             print_success "Binary found - build valid"
         else
             print_error "Binary not found in build"
@@ -187,7 +187,7 @@ test_build() {
 
 # ===== MAIN FLOW =====
 main() {
-    print_header "🚀 MultiScope Flatpak Builder"
+    print_header "🚀 Twinverse Flatpak Builder"
     echo "App ID: $APP_ID"
     echo "Manifest: $MANIFEST"
     echo ""
@@ -279,7 +279,7 @@ show_usage_instructions() {
 📁 CREATED STRUCTURE:
   $BUILD_DIR/     - Build directory
   $REPO_DIR/      - Local OSTree repository
-  MultiScope-*.flatpak - Installable bundle
+  Twinverse-*.flatpak - Installable bundle
 
 EOF
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env xdg-open
 [Desktop Entry]
-Name=MultiScope
-Exec=multiscope
-Icon=io.github.mallor.MultiScope
+Name=Twinverse
+Exec=twinverse
+Icon=io.github.mallor.Twinverse
 Type=Application
 Categories=Game;Utility;
 Comment=Play any game from your Steam library in splitscreen or with multiple monitors.

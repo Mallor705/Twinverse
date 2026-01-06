@@ -15,7 +15,7 @@ class VirtualDeviceService:
             # If it exists, we assume the devnode is also known and correct
             return self._ui.devnode
 
-        device_name = "Virtual Joystick by MultiScope"
+        device_name = "Virtual Joystick by Twinverse"
         try:
             capabilities = {
                 e.EV_KEY: [e.BTN_A],

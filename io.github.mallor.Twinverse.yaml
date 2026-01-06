@@ -1,8 +1,8 @@
-app-id: io.github.mallor.MultiScope
+app-id: io.github.mallor.Twinverse
 runtime: org.gnome.Platform
 runtime-version: '49'
 sdk: org.gnome.Sdk
-command: multiscope
+command: twinverse
 
 finish-args:
   # GPU acceleration
@@ -43,34 +43,34 @@ modules:
   - flatpak/python-modules.json
 
   # Main application
-  - name: multiscope
+  - name: twinverse
     buildsystem: simple
     build-commands:
       # Copy source files
-      - mkdir -p /app/lib/multiscope
-      - cp -r src /app/lib/multiscope/
-      - cp -r res /app/lib/multiscope/
-      - cp multiscope.py /app/lib/multiscope/
+      - mkdir -p /app/lib/twinverse
+      - cp -r src /app/lib/twinverse/
+      - cp -r res /app/lib/twinverse/
+      - cp twinverse.py /app/lib/twinverse/
 
       # Create bin directory and wrapper script
       - mkdir -p /app/bin
       - |
-        cat > /app/bin/multiscope << 'WRAPPER_EOF'
+        cat > /app/bin/twinverse << 'WRAPPER_EOF'
         #!/bin/bash
-        exec python3 /app/lib/multiscope/multiscope.py "$@"
+        exec python3 /app/lib/twinverse/twinverse.py "$@"
         WRAPPER_EOF
-      - chmod +x /app/bin/multiscope
+      - chmod +x /app/bin/twinverse
 
       # Install desktop file and icon
-      - install -Dm644 share/applications/io.github.mallor.MultiScope.desktop /app/share/applications/io.github.mallor.MultiScope.desktop
-      - install -Dm644 share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg /app/share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg
+      - install -Dm644 share/applications/io.github.mallor.Twinverse.desktop /app/share/applications/io.github.mallor.Twinverse.desktop
+      - install -Dm644 share/icons/hicolor/scalable/apps/io.github.mallor.Twinverse.svg /app/share/icons/hicolor/scalable/apps/io.github.mallor.Twinverse.svg
 
       # Update desktop file with correct app-id
-      - desktop-file-edit --set-key=Icon --set-value=io.github.mallor.MultiScope /app/share/applications/io.github.mallor.MultiScope.desktop
-      - desktop-file-edit --set-key=Exec --set-value=multiscope /app/share/applications/io.github.mallor.MultiScope.desktop
+      - desktop-file-edit --set-key=Icon --set-value=io.github.mallor.Twinverse /app/share/applications/io.github.mallor.Twinverse.desktop
+      - desktop-file-edit --set-key=Exec --set-value=twinverse /app/share/applications/io.github.mallor.Twinverse.desktop
 
       # Install metainfo
-      - install -Dm644 share/metainfo/io.github.mallor.MultiScope.metainfo.xml /app/share/metainfo/io.github.mallor.MultiScope.metainfo.xml
+      - install -Dm644 share/metainfo/io.github.mallor.Twinverse.metainfo.xml /app/share/metainfo/io.github.mallor.Twinverse.metainfo.xml
 
     sources:
       - type: dir

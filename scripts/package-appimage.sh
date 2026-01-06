@@ -43,7 +43,7 @@ mkdir -p AppDir/usr/lib/girepository-1.0
 
 # 7. Copy the executable
 echo "📋 Copying executable..."
-cp dist/multiscope AppDir/usr/bin/
+cp dist/twinverse AppDir/usr/bin/
 
 # 8. Copy GTK and GObject Introspection libraries
 echo "📚 Copying GTK libraries..."
@@ -205,7 +205,7 @@ export GTK_DATA_PREFIX="${HERE}/usr"
 export GSETTINGS_BACKEND=memory
 
 # Run the application
-exec "${HERE}/usr/bin/multiscope" "$@"
+exec "${HERE}/usr/bin/twinverse" "$@"
 APPRUN_EOF
 
 chmod +x AppDir/AppRun
@@ -215,11 +215,11 @@ echo "📋 Copying desktop file and icon..."
 mkdir -p AppDir/usr/share/applications
 mkdir -p AppDir/usr/share/icons/hicolor/scalable/apps
 mkdir -p AppDir/usr/share/metainfo
-cp share/applications/io.github.mallor.MultiScope.desktop AppDir/usr/share/applications/
-cp share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg AppDir/usr/share/icons/hicolor/scalable/apps/
-cp share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg AppDir/io.github.mallor.MultiScope.svg
-cp share/applications/io.github.mallor.MultiScope.desktop AppDir/io.github.mallor.MultiScope.desktop
-cp share/metainfo/io.github.mallor.MultiScope.metainfo.xml AppDir/usr/share/metainfo/
+cp share/applications/io.github.mallor.Twinverse.desktop AppDir/usr/share/applications/
+cp share/icons/hicolor/scalable/apps/io.github.mallor.Twinverse.svg AppDir/usr/share/icons/hicolor/scalable/apps/
+cp share/icons/hicolor/scalable/apps/io.github.mallor.Twinverse.svg AppDir/io.github.mallor.Twinverse.svg
+cp share/applications/io.github.mallor.Twinverse.desktop AppDir/io.github.mallor.Twinverse.desktop
+cp share/metainfo/io.github.mallor.Twinverse.metainfo.xml AppDir/usr/share/metainfo/
 
 # 14. Run linuxdeploy to finalize (without strip) and create AppImage
 echo "🔧 Running linuxdeploy..."
@@ -228,19 +228,19 @@ NO_STRIP=1 ./linuxdeploy-x86_64.AppImage \
     --output appimage
 
 # 15. Verify the AppImage
-if [ -f MultiScope-*.AppImage ]; then
+if [ -f Twinverse-*.AppImage ]; then
     echo ""
     echo "✅ AppImage created successfully!"
-    echo "📦 File: $(ls MultiScope-*.AppImage)"
-    echo "📏 Size: $(du -h MultiScope-*.AppImage | cut -f1)"
+    echo "📦 File: $(ls Twinverse-*.AppImage)"
+    echo "📏 Size: $(du -h Twinverse-*.AppImage | cut -f1)"
     echo ""
     echo "🎉 This AppImage is fully self-contained and should work on any Linux system!"
     echo ""
     echo "📝 Testing instructions:"
-    echo "  1. Transfer to Debian: scp MultiScope-*.AppImage user@debian:/path/"
-    echo "  2. Make executable: chmod +x MultiScope-*.AppImage"
-    echo "  3. Run directly: ./MultiScope-*.AppImage"
-    echo "  4. Or extract: ./MultiScope-*.AppImage --appimage-extract && cd squashfs-root && ./AppRun"
+    echo "  1. Transfer to Debian: scp Twinverse-*.AppImage user@debian:/path/"
+    echo "  2. Make executable: chmod +x Twinverse-*.AppImage"
+    echo "  3. Run directly: ./Twinverse-*.AppImage"
+    echo "  4. Or extract: ./Twinverse-*.AppImage --appimage-extract && cd squashfs-root && ./AppRun"
     echo ""
 else
     echo "❌ AppImage creation failed!"

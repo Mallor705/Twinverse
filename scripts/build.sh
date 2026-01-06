@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# MultiScope PyInstaller Build Script
-# This script compiles the MultiScope project into a standalone executable
+# Twinverse PyInstaller Build Script
+# This script compiles the Twinverse project into a standalone executable
 
 set -e  # Exit on any error
 
 ./scripts/clean.sh
 
-echo "🚀 Starting MultiScope Build Process..."
+echo "🚀 Starting Twinverse Build Process..."
 
 # Get the directory where the script is located and go to project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -55,7 +55,7 @@ echo "   GI Typelib Path: $GI_TYPELIB_PATH"
 
 # Create PyInstaller spec file
 echo "📝 Creating PyInstaller spec file..."
-cat > multiscope.spec << 'EOF'
+cat > twinverse.spec << 'EOF'
 # -*- mode: python ; coding: utf-8 -*-
 
 import os
@@ -177,7 +177,7 @@ hidden_imports = [
 block_cipher = None
 
 a = Analysis(
-    ['multiscope.py'],
+    ['twinverse.py'],
     pathex=[str(project_root)],
     binaries=binaries,
     datas=data_files,
@@ -201,7 +201,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='multiscope',
+    name='twinverse',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -219,28 +219,28 @@ EOF
 
 # Build with PyInstaller
 echo "🔨 Building executable with PyInstaller..."
-pyinstaller multiscope.spec --clean --noconfirm
+pyinstaller twinverse.spec --clean --noconfirm
 
 # Check if build was successful
-if [ -f "dist/multiscope" ]; then
+if [ -f "dist/twinverse" ]; then
     echo "✅ Build successful!"
-    echo "📁 Executable created at: dist/multiscope"
-    echo "📏 File size: $(du -h dist/multiscope | cut -f1)"
+    echo "📁 Executable created at: dist/twinverse"
+    echo "📏 File size: $(du -h dist/twinverse | cut -f1)"
 
     # Make executable
-    chmod +x dist/multiscope
+    chmod +x dist/twinverse
 
     echo ""
-    echo "🎉 MultiScope has been successfully compiled!"
+    echo "🎉 Twinverse has been successfully compiled!"
     echo ""
     echo "To run the compiled version:"
-    echo "  ./dist/multiscope"
+    echo "  ./dist/twinverse"
     echo ""
     echo "To open GUI:"
-    echo "  ./dist/multiscope gui"
+    echo "  ./dist/twinverse gui"
     echo ""
     echo "To run a profile:"
-    echo "  ./dist/multiscope <profile_name>"
+    echo "  ./dist/twinverse <profile_name>"
     echo ""
 
 else

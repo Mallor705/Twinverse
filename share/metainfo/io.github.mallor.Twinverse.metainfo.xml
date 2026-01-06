@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.mallor.MultiScope</id>
+  <id>io.github.mallor.Twinverse</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0</project_license>
-  <name>MultiScope</name>
+  <name>Twinverse</name>
   <summary>Play any game from your Steam library in splitscreen or with multiple monitors.</summary>
 
   <description>
     <p>
-      MultiScope is an open-source tool for Linux/SteamOS that allows you to create and manage
+      Twinverse is an open-source tool for Linux/SteamOS that allows you to create and manage
       multiple instances of `gamescope` and `steam` simultaneously.
       This enables multiple players to enjoy their game library on a single computer,
       either in split-screen mode or each with their own display, along with dedicated
@@ -25,29 +25,29 @@
     </ul>
   </description>
 
-  <launchable type="desktop-id">io.github.mallor.MultiScope.desktop</launchable>
+  <launchable type="desktop-id">io.github.mallor.Twinverse.desktop</launchable>
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/multiscope-ui.png</image>
+      <image>https://raw.githubusercontent.com/Mallor705/Twinverse/master/share/screenshots/twinverse-ui.png</image>
       <caption>Main application window</caption>
     </screenshot>
     <screenshot>
-      <video>https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/videos/horizontal-demo.webm</video>
-      <caption>Demonstration of MultiScope in action.</caption>
+      <video>https://raw.githubusercontent.com/Mallor705/Twinverse/master/share/videos/horizontal-demo.webm</video>
+      <caption>Demonstration of Twinverse in action.</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/vertical-game.png</image>
+      <image>https://raw.githubusercontent.com/Mallor705/Twinverse/master/share/screenshots/vertical-game.png</image>
       <caption>Split-screen Game Vertical</caption>
     </screenshot>
   </screenshots>
 
-  <url type="homepage">https://github.com/Mallor705/MultiScope</url>
-  <url type="bugtracker">https://github.com/Mallor705/MultiScope/issues/new</url>
+  <url type="homepage">https://github.com/Mallor705/Twinverse</url>
+  <url type="bugtracker">https://github.com/Mallor705/Twinverse/issues/new</url>
   <url type="donation">https://ko-fi.com/mallor</url>
 
   <provides>
-    <binary>multiscope</binary>
+    <binary>twinverse</binary>
     <input>pointer</input>
     <input>keyboard</input>
     <input>gamepad</input>
@@ -57,7 +57,7 @@
   <releases>
     <release version="0.9.0" date="2026-01-05">
       <description>
-        <p>This is the first stable version of MultiScope, now with Flatpak and AppImage support.</p>
+        <p>This is the first stable version of Twinverse, now with Flatpak and AppImage support.</p>
       </description>
     </release>
   </releases>

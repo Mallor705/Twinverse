@@ -1,4 +1,4 @@
-"""Services for MultiScope application logic."""
+"""Services for Twinverse application logic."""
 
 from .cmd_builder import CommandBuilder
 from .device_manager import DeviceManager

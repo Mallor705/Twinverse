@@ -1,5 +1,5 @@
 #!/bin/bash
-# Automated release script for MultiScope
+# Automated release script for Twinverse
 
 set -e  # Exit on error
 
@@ -72,7 +72,7 @@ create_release() {
 
     # Commit version changes
     print_header "Committing changes"
-    git add version share/metainfo/io.github.mallor.MultiScope.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh
+    git add version share/metainfo/io.github.mallor.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh
     git commit -m "Bump version to $version"
 
     # Create tag
@@ -94,7 +94,7 @@ create_release() {
 # Function to show help
 show_help() {
     cat << EOF
-MultiScope Release Script
+Twinverse Release Script
 
 Usage: $0 [OPTIONS] [VERSION]
 

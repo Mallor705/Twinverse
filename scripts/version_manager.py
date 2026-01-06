@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to manage MultiScope versioning.
+Script to manage Twinverse versioning.
 
 This script automatically updates the version in all necessary files
 when a new version is defined.
@@ -85,11 +85,11 @@ def set_new_version(new_version):
     # List of files that contain the version
     files_to_update = [
         "scripts/package-appimage.sh",
-        "share/metainfo/io.github.mallor.MultiScope.metainfo.xml",
+        "share/metainfo/io.github.mallor.Twinverse.metainfo.xml",
         "README.md",
         "docs/README.pt-br.md",
         "docs/README.es.md",
-        "io.github.mallor.MultiScope.yaml",  # Although it doesn't contain version directly, it may contain references
+        "io.github.mallor.Twinverse.yaml",  # Although it doesn't contain version directly, it may contain references
         "scripts/package-flatpak.sh",
     ]
 

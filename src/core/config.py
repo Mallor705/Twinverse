@@ -4,9 +4,9 @@ from pathlib import Path
 
 class Config:
     """
-    Global MultiScope configurations.
+    Global Twinverse configurations.
     """
-    APP_NAME = "multiscope"
+    APP_NAME = "twinverse"
 
     @staticmethod
     def _get_script_dir() -> Path:

@@ -1,9 +1,9 @@
-"""Core components of the MultiScope application."""
+"""Core components of the Twinverse application."""
 
 from .config import Config
 from .exceptions import (
     DependencyError,
-    MultiScopeError,
+    TwinverseError,
     ProfileNotFoundError,
     VirtualDeviceError,
 )
@@ -13,7 +13,7 @@ from .utils import Utils
 __all__ = [
     "Config",
     "DependencyError",
-    "MultiScopeError",
+    "TwinverseError",
     "ProfileNotFoundError",
     "VirtualDeviceError",
     "Logger",

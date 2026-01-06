@@ -1,14 +1,14 @@
 [English](../README.md) | [Português](./README.pt-br.md)
 
-# MultiScope
+# Twinverse
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/icons/hicolor/scalable/apps/io.github.mallor.MultiScope.svg" alt="MultiScope Logo" width="128" height="128">
+  <img src="https://raw.githubusercontent.com/Mallor705/Twinverse/master/share/icons/hicolor/scalable/apps/io.github.mallor.Twinverse.svg" alt="Twinverse Logo" width="128" height="128">
 </p>
 
 <p align="center">
-  <a href="https://github.com/Mallor705/Multiscope/releases"><img src="https://img.shields.io/badge/Version-0.9.0-blue.svg" alt="Version"/></a>
-  <a href="https://github.com/Mallor705/MultiScope/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-green.svg" alt="License"/></a>
+  <a href="https://github.com/Mallor705/Twinverse/releases"><img src="https://img.shields.io/badge/Version-0.9.0-blue.svg" alt="Version"/></a>
+  <a href="https://github.com/Mallor705/Twinverse/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-green.svg" alt="License"/></a>
   <a href="https://www.gtk.org/"><img src="https://img.shields.io/badge/GTK-4.0+-orange.svg" alt="GTK Version"/></a>
   <a href="https://gnome.pages.gitlab.gnome.org/libadwaita/"><img src="https://img.shields.io/badge/libadwaita-1.0+-purple.svg" alt="libadwaita Version"/></a>
 </p>
@@ -20,24 +20,24 @@
   <a href="https://www.w3.org/Style/CSS/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/CSS3-66309A?style=for-the-badge&logo=css3&logoColor=white" alt="CSS"/></a>
 </p>
 
-**MultiScope** es una herramienta para Linux/SteamOS que te permite crear y gestionar múltiples instancias de `gamescope` y `steam` simultáneamente. Esto permite que varios jugadores disfruten de su biblioteca de juegos en una sola computadora, ya sea en pantalla dividida o cada uno con su propia pantalla, además de contar con salida de audio y dispositivos de entrada dedicados.
+**Twinverse** es una herramienta para Linux/SteamOS que te permite crear y gestionar múltiples instancias de `gamescope` y `steam` simultáneamente. Esto permite que varios jugadores disfruten de su biblioteca de juegos en una sola computadora, ya sea en pantalla dividida o cada uno con su propia pantalla, además de contar con salida de audio y dispositivos de entrada dedicados.
 
 ---
 
 <p align="center">
-  <img width="850" height="650" alt="multiscope_ui" src="https://raw.githubusercontent.com/Mallor705/MultiScope/master/share/screenshots/multiscope-ui.png" />
+  <img width="850" height="650" alt="twinverse_ui" src="https://raw.githubusercontent.com/Mallor705/Twinverse/master/share/screenshots/twinverse-ui.png" />
 </p>
 
 ## ✨ Características Principales
 
-MultiScope está diseñado como una solución flexible para jugar múltiples juegos al mismo tiempo en Linux. Aquí están algunas de sus características principales:
+Twinverse está diseñado como una solución flexible para jugar múltiples juegos al mismo tiempo en Linux. Aquí están algunas de sus características principales:
 
 1.  **Gestión Sencilla de Múltiples Instancias:** Ejecuta varias instancias de Steam al mismo tiempo, permitiendo que tú y tus amigos disfruten sus bibliotecas de juegos por separado.
 2.  **Asignación de Hardware por Instancia:** Asigna ratones, teclados y controles específicos a cada instancia del juego. (El ratón/teclado solo se puede asignar a una instancia a la vez)
 3.  **Canales de Audio Dedicados:** Envía el audio de cada instancia del juego a un dispositivo de salida de audio separado.
-4.  **Directorio Home Separado:** MultiScope te permite tener un directorio "home" nuevo y separado para cada instancia, lo que te permite personalizar configuraciones y archivos individualmente. (No interfiere con tu directorio Home principal)
-5.  **Biblioteca de Juegos Compartida:** MultiScope te permite compartir el directorio de juegos de Steam entre varias instancias, ahorrando espacio en disco y facilitando las actualizaciones de juegos. (Los usuarios necesitan tener el juego en sus bibliotecas de Steam para poder ejecutarlo)
-6.  **Usa Cualquier Proton:** MultiScope te permite usar cualquier versión de Proton para ejecutar tus juegos, incluyendo versiones personalizadas como [ProtonGE](https://github.com/GloriousEggroll/proton-ge-custom).
+4.  **Directorio Home Separado:** Twinverse te permite tener un directorio "home" nuevo y separado para cada instancia, lo que te permite personalizar configuraciones y archivos individualmente. (No interfiere con tu directorio Home principal)
+5.  **Biblioteca de Juegos Compartida:** Twinverse te permite compartir el directorio de juegos de Steam entre varias instancias, ahorrando espacio en disco y facilitando las actualizaciones de juegos. (Los usuarios necesitan tener el juego en sus bibliotecas de Steam para poder ejecutarlo)
+6.  **Usa Cualquier Proton:** Twinverse te permite usar cualquier versión de Proton para ejecutar tus juegos, incluyendo versiones personalizadas como [ProtonGE](https://github.com/GloriousEggroll/proton-ge-custom).
 7.  **Juega lo que Quieras:** Las instancias no están limitadas a jugar el mismo juego; cada instancia puede jugar el juego que desee (siempre que el usuario tenga el juego en su biblioteca de Steam).
 
 ---
@@ -51,35 +51,35 @@ MultiScope está diseñado como una solución flexible para jugar múltiples jue
 ## 📦 Instalación
 
 ### Flatpak (Recomendado)
-La forma recomendada de instalar MultiScope es a través de Flatpak, que proporciona un entorno aislado y actualizaciones más sencillas. Puedes instalarlo desde Flathub (una vez que esté disponible) o desde un archivo `.flatpak` desde la [página de releases](https://github.com/Mallor705/MultiScope/releases).
+La forma recomendada de instalar Twinverse es a través de Flatpak, que proporciona un entorno aislado y actualizaciones más sencillas. Puedes instalarlo desde Flathub (una vez que esté disponible) o desde un archivo `.flatpak` desde la [página de releases](https://github.com/Mallor705/Twinverse/releases).
 
 **Opción 1: Instalar desde Flathub (Próximamente)**
-Una vez que MultiScope esté disponible en Flathub, puedes instalarlo usando los siguientes comandos:
+Una vez que Twinverse esté disponible en Flathub, puedes instalarlo usando los siguientes comandos:
 ```bash
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub io.github.mallor.MultiScope
+flatpak install flathub io.github.mallor.Twinverse
 ```
 
 **Opción 2: Instalar desde un archivo .flatpak**
 1. **Descarga el último archivo .flatpak:**
-   Ve a la página de [**Releases**](https://github.com/Mallor705/MultiScope/releases) y descarga el último archivo `.flatpak`.
+   Ve a la página de [**Releases**](https://github.com/Mallor705/Twinverse/releases) y descarga el último archivo `.flatpak`.
 
 2. **Instala el Flatpak:**
    Puedes instalar el Flatpak con el siguiente comando:
    ```bash
-   flatpak install MultiScope.flatpak
+   flatpak install Twinverse.flatpak
    ```
 
 ### AppImage
 Alternativamente, puedes usar la versión AppImage. Este archivo único funciona en la mayoría de las distribuciones modernas de Linux sin necesidad de instalación en el sistema.
 
 1.  **Descarga la AppImage más reciente:**
-    Ve a la página de [**Releases**](https://github.com/Mallor705/MultiScope/releases) y descarga el archivo `.AppImage` más reciente.
+    Ve a la página de [**Releases**](https://github.com/Mallor705/Twinverse/releases) y descarga el archivo `.AppImage` más reciente.
 
 2.  **Hazlo Ejecutable:**
     Después de descargarlo, haz clic derecho en el archivo, ve a "Propiedades" y marca la casilla "Permitir ejecutar el archivo como programa". Alternativamente, puedes usar la terminal:
     ```bash
-    chmod +x MultiScope-*.AppImage
+    chmod +x Twinverse-*.AppImage
     ```
 
 3.  **Ejecuta la Aplicación:**
@@ -91,31 +91,31 @@ Para una mejor integración con el sistema (por ejemplo, agregar una entrada en 
 
 ## 📖 ¿Cómo usarlo?
 
-Consulta nuestra [Guía](./GUIDE.es.md) para obtener más información sobre cómo usar MultiScope.
+Consulta nuestra [Guía](./GUIDE.es.md) para obtener más información sobre cómo usar Twinverse.
 
 ---
 
 ## 🚀 Estado y Compatibilidad del Proyecto
 
-Necesita tener los paquetes `steam` y `gamescope` nativos de su distribución. MultiScope debería funcionar correctamente en sistemas que ya ejecutan `Gamescope` y `Steam` con normalidad.
+Necesita tener los paquetes `steam` y `gamescope` nativos de su distribución. Twinverse debería funcionar correctamente en sistemas que ya ejecutan `Gamescope` y `Steam` con normalidad.
 
 Para que el mosaico automático de ventanas funcione correctamente, se recomienda usar KDE Plasma 6.0 o superior. En otros entornos de escritorio (DE), deberá mover las ventanas usted mismo.
 
-MultiScope está en desarrollo activo; todavía se pueden encontrar algunos errores.
+Twinverse está en desarrollo activo; todavía se pueden encontrar algunos errores.
 
-Si encuentras problemas, no dudes en compartir tus comentarios y reportar errores en la sección de [Issues](https://github.com/Mallor705/MultiScope/issues/new).
+Si encuentras problemas, no dudes en compartir tus comentarios y reportar errores en la sección de [Issues](https://github.com/Mallor705/Twinverse/issues/new).
 
 ---
 
 ## ⚙️ Cómo Funciona
 
-MultiScope utiliza **Bubblewrap (`bwrap`)**, una herramienta de sandbox de bajo nivel para Linux, para aislar cada instancia de Steam. Esto garantiza que las instancias no interfieran entre sí ni con el sistema principal del usuario. Además, la línea de comandos de `Gamescope` se genera dinámicamente según la configuración del usuario, involucrando el comando `bwrap`, que, a su vez, inicia `Steam`.
+Twinverse utiliza **Bubblewrap (`bwrap`)**, una herramienta de sandbox de bajo nivel para Linux, para aislar cada instancia de Steam. Esto garantiza que las instancias no interfieran entre sí ni con el sistema principal del usuario. Además, la línea de comandos de `Gamescope` se genera dinámicamente según la configuración del usuario, involucrando el comando `bwrap`, que, a su vez, inicia `Steam`.
 
 ---
 
 ## 🛠️ Para Desarrolladores
 
-Si deseas contribuir a MultiScope o ejecutarlo directamente desde el código fuente, sigue las instrucciones a continuación.
+Si deseas contribuir a Twinverse o ejecutarlo directamente desde el código fuente, sigue las instrucciones a continuación.
 
 ### Ejecutar desde el Código Fuente
 
@@ -123,8 +123,8 @@ El script `run.sh` proporciona una forma rápida de configurar un entorno local 
 
 ```bash
 # Clona el repositorio
-git clone https://github.com/Mallor705/MultiScope.git
-cd MultiScope
+git clone https://github.com/Mallor705/Twinverse.git
+cd Twinverse
 
 # Ejecuta el script de lanzamiento
 ./run.sh
@@ -132,7 +132,7 @@ cd MultiScope
 
 ### Compilar desde el Código Fuente
 
-MultiScope proporciona un Makefile para gestionar compilaciones y versiones. Puedes compilar la aplicación usando el siguiente comando:
+Twinverse proporciona un Makefile para gestionar compilaciones y versiones. Puedes compilar la aplicación usando el siguiente comando:
 
 ```bash
 make build
@@ -174,7 +174,7 @@ O usando el script directamente:
 
 ## 🤝 Cómo Contribuir
 
-¡Aceptamos contribuciones de todos! Si estás interesado en ayudar a mejorar MultiScope, sigue estos pasos:
+¡Aceptamos contribuciones de todos! Si estás interesado en ayudar a mejorar Twinverse, sigue estos pasos:
 
 1.  **Haz un Fork del Repositorio:** Crea tu propia copia del proyecto en GitHub.
 2.  **Crea una Rama:** Crea una nueva rama para tu función o corrección de errores (`git checkout -b mi-funcion-increible`).
@@ -189,9 +189,9 @@ Este proyecto está bajo la **Licencia Pública General de GNU v3.0 (GPL-3.0)**.
 
 ## ⚖️ Aviso Legal
 
-MultiScope es un proyecto independiente de código abierto y no está afiliado, respaldado o de ninguna manera conectado oficialmente con Valve Corporation o Steam.
+Twinverse es un proyecto independiente de código abierto y no está afiliado, respaldado o de ninguna manera conectado oficialmente con Valve Corporation o Steam.
 
-Esta herramienta actúa como una capa de orquestación que aprovecha tecnologías de aislamiento (`bubblewrap`) para ejecutar múltiples instancias aisladas del cliente oficial de Steam. MultiScope **no modifica, parchea, realiza ingeniería inversa ni altera** ningún archivo de Steam o su funcionamiento normal. Todas las instancias de Steam lanzadas por esta herramienta son las versiones oficiales y no modificadas proporcionadas por Valve.
+Esta herramienta actúa como una capa de orquestación que aprovecha tecnologías de aislamiento (`bubblewrap`) para ejecutar múltiples instancias aisladas del cliente oficial de Steam. Twinverse **no modifica, parchea, realiza ingeniería inversa ni altera** ningún archivo de Steam o su funcionamiento normal. Todas las instancias de Steam lanzadas por esta herramienta son las versiones oficiales y no modificadas proporcionadas por Valve.
 
 Los usuarios son los únicos responsables de cumplir con los términos del Acuerdo de Suscriptor de Steam.
 

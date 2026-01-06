@@ -25,4 +25,4 @@ pip install -r requirements.txt
 
 # Run application
 echo "🚀 Running application..."
-python3 multiscope.py "$@"
+python3 twinverse.py "$@"

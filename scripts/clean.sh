@@ -13,7 +13,7 @@ echo ""
 
 # Passo 1: Stop processes
 echo "1️⃣  Stoping processes..."
-pkill -9 -f multiscope 2>/dev/null || true
+pkill -9 -f twinverse 2>/dev/null || true
 pkill -9 -f gamescope 2>/dev/null || true
 pkill -9 -f wine 2>/dev/null || true
 sleep 1
