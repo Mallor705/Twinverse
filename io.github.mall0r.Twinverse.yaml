@@ -14,7 +14,7 @@ finish-args:
   # Input devices (evdev)
   - --device=all
 
-  # For KDE integration
+  # For start instances, isolate devices and KDE integration
   - --talk-name=org.freedesktop.Flatpak
 
   # File system access
