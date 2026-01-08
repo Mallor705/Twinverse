@@ -56,7 +56,7 @@ O Twinverse foi projetado para ser uma solução flexível para múltiplos jogos
 
 > [!NOTE]
 > É necessário ter instalados os pacotes `gamescope`, `steam` e `mangoapp` nativos de sua distro.
-> SteamOS and Bazzite usually have all dependencies included by default.
+> SteamOS e Bazzite geralmente têm todas as dependências incluídas por padrão.
 
 Twinverse deve funcionar bem em qualquer sistema que suporte `Gamescope` e `Steam`.
 

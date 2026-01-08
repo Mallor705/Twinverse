@@ -56,7 +56,7 @@ Twinverse is designed as a flexible solution for simultaneous multi-gaming on Li
 
 > [!NOTE]
 > You need to have installed the `gamescope`, `steam` and `mangoapp` packages native to your distro.
-> SteamOS and Bazzite 
+> SteamOS and Bazzite usually have all dependencies included by default.
 
 Twinverse should work well on any system that supports `Gamescope` and `Steam`.
 
