@@ -58,12 +58,25 @@ setup_runtime() {
     local runtime="org.gnome.Platform"
     local sdk="org.gnome.Sdk"
 
-    if ! flatpak list --runtime | grep -q "$runtime//$sdk_version"; then
-        echo "Installing GNOME $sdk_version runtime..."
-        flatpak install -y flathub "$runtime//$sdk_version" "$sdk//$sdk_version" || {
-            print_error "Failed to install runtime"
-            exit 1
-        }
+    # Check if running in CI environment
+    if [[ -n "$GITHUB_ACTIONS" ]]; then
+        # In CI, use user installation
+        if ! flatpak list --user --runtime | grep -q "$runtime//$sdk_version"; then
+            echo "Installing GNOME $sdk_version runtime for user..."
+            flatpak install -y --user flathub "$runtime//$sdk_version" "$sdk//$sdk_version" || {
+                print_error "Failed to install runtime"
+                exit 1
+            }
+        fi
+    else
+        # For local builds, use system installation
+        if ! flatpak list --runtime | grep -q "$runtime//$sdk_version"; then
+            echo "Installing GNOME $sdk_version runtime..."
+            flatpak install -y flathub "$runtime//$sdk_version" "$sdk//$sdk_version" || {
+                print_error "Failed to install runtime"
+                exit 1
+            }
+        fi
     fi
 
     print_success "Runtime configured"
@@ -108,6 +121,12 @@ build_flatpak() {
         --disable-updates
         --keep-build-dirs
     )
+
+    # Check if running in CI environment
+    if [[ -n "$GITHUB_ACTIONS" ]]; then
+        # In CI, install dependencies for user
+        build_cmd+=(--user)
+    fi
 
     # Check if it's a development build
     if [[ "${1:-}" == "--dev" ]]; then
