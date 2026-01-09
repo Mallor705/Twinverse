@@ -142,20 +142,8 @@ jobs:
 
       - name: Update metainfo.xml with semantic version
         run: |
-          VERSION="${{ needs.semantic.outputs.version }}"
-          # Remover o prefixo 'v' se presente e verificar se a versão é válida
-          VERSION_CLEAN=${VERSION#v}
-
-          # Verificar se VERSION_CLEAN é um número de versão válido (x.y.z)
-          if [[ $VERSION_CLEAN =~ ^[0-9]+\.[0-9]+\.[0-9]+.*$ ]]; then
-            # Atualizar o arquivo metainfo.xml com a versão do semantic
-            sed -i.bak "s/version=\"[0-9]*\.[0-9]*\.[0-9]*[^"]*\"/version=\"$VERSION_CLEAN\"/" share/metainfo/io.github.mall0r.Twinverse.metainfo.xml
-            echo "Updated metainfo.xml with semantic version: $VERSION_CLEAN"
-          else
-            # Fallback para 0.0.0 se a versão do semantic não for válida
-            sed -i.bak "s/version=\"[0-9]*\.[0-9]*\.[0-9]*[^"]*\"/version=\"0.0.0\"/" share/metainfo/io.github.mall0r.Twinverse.metainfo.xml
-            echo "Updated metainfo.xml with fallback version: 0.0.0 (semantic version was: $VERSION)"
-          fi
+          # A versão já foi atualizada pelo make update-version-force na etapa semantic
+          echo "Version already updated by make update-version-force in semantic step"
 
       - name: Set artifact name
         id: set_artifact_name
