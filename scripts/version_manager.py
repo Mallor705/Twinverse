@@ -62,7 +62,7 @@ def get_current_version():
     return None
 
 
-def set_new_version(new_version):
+def set_new_version(new_version, force=False):
     """Sets a new version and updates all relevant files."""
     old_version = get_current_version()
 
@@ -70,7 +70,7 @@ def set_new_version(new_version):
         print("Error: version file not found or empty")
         return False
 
-    if old_version == new_version:
+    if old_version == new_version and not force:
         print(f"Version is already {new_version}")
         return True
 
@@ -108,17 +108,18 @@ def set_new_version(new_version):
 
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
         current_version = get_current_version()
         if current_version:
-            print(f"Usage: python {sys.argv[0]} <new_version>")
+            print(f"Usage: python {sys.argv[0]} <new_version> [force]")
             print(f"Current version: {current_version}")
         else:
-            print(f"Usage: python {sys.argv[0]} <new_version>")
+            print(f"Usage: python {sys.argv[0]} <new_version> [force]")
             print("No current version found")
         return 1
 
     new_version = sys.argv[1]
+    force = len(sys.argv) == 3 and sys.argv[2] == "force"
 
     # Validate version format (x.y.z)
     version_pattern = r"^[0-9]+\.[0-9]+\.[0-9]+$"
@@ -126,7 +127,7 @@ def main():
         print(f"Error: Invalid version format. Use x.y.z format (e.g., 1.0.0)")
         return 1
 
-    if not set_new_version(new_version):
+    if not set_new_version(new_version, force):
         return 1
 
     return 0

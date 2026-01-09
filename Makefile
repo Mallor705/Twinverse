@@ -27,6 +27,7 @@ help:
 	@echo "                       Usage: make release-custom v=x.y.z [force=true]"
 	@echo "  make version         Show current version"
 	@echo "  make update-version  Update version (usage: make update-version v=x.y.z)"
+	@echo "  make update-version-force  Update version even if same (usage: make update-version-force v=x.y.z)"
 	@echo "  make bump-major      Increment major version (x.0.0)"
 	@echo "  make bump-minor      Increment minor version (0.y.0)"
 	@echo "  make release-minor   Create a minor release (0.y.0)"
@@ -105,6 +106,14 @@ ifndef v
 endif
 	@echo "Updating version from $(VERSION) to $(v)"
 	@python scripts/version_manager.py $(v)
+
+# Update version with force option
+update-version-force:
+ifndef v
+	$(error Please specify the new version: make update-version-force v=1.2.3)
+endif
+	@echo "Updating version from $(VERSION) to $(v) with force"
+	@python scripts/version_manager.py $(v) force
 
 # Increment major version
 bump-major:
@@ -233,4 +242,4 @@ appimage:
 	./scripts/package-appimage.sh
 	@echo "AppImage package created successfully!"
 
-.PHONY: help build flatpak validate-manifest test clean bump-patch release-major release-custom version update-version bump-major bump-minor release-minor release-patch check-deps git-status appimage dev
+.PHONY: help build flatpak validate-manifest test clean bump-patch release-major release-custom version update-version update-version-force bump-major bump-minor release-minor release-patch check-deps git-status appimage dev
