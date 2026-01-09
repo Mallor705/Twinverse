@@ -2,10 +2,7 @@ name: Flatpak Release Pipeline
 
 on:
   push:
-    branches: [main, master]
-    tags:
-      - 'v*.*.*'           # Dispara para tags no formato v1.2.3
-      - '!v*.*.*-rc*'      # Ignora release candidates
+    branches: [main, master, build/workflow]
   workflow_dispatch:
     inputs:
       version:
@@ -166,8 +163,15 @@ jobs:
           git add .
           git commit -m "chore(release): atualiza versão para $VERSION [skip ci]" || echo "Nenhuma alteração para commit"
 
-          # Fazer push das alterações
-          git push origin HEAD:${{ github.ref_name }} || echo "Falha ao fazer push - talvez devido a proteção de branch"
+          # Obter o nome da branch correta
+          BRANCH_NAME=$(echo $GITHUB_REF | sed 's|refs/heads/||')
+
+          # Fazer push para a branch
+          git push origin HEAD:$BRANCH_NAME || echo "Falha ao fazer push - talvez devido a proteção de branch"
+
+          # Criar tag para a nova versão
+          git tag -a "$VERSION" -m "Release $VERSION"
+          git push origin "$VERSION" || echo "Falha ao fazer push da tag - talvez já exista"
 
   # Fase 3: Build apenas para x86_64
   build:
@@ -253,17 +257,11 @@ jobs:
           name: ${{ needs.build.outputs.artifact_name }}
           path: dist/x86_64
 
-      - name: Get version from version file
-        id: get_version
-        run: |
-          VERSION=$(cat version)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
-          name: Release v${{ steps.get_version.outputs.version }}
+          tag_name: ${{ needs.semantic.outputs.version }}
+          name: Release ${{ needs.semantic.outputs.version }}
           body: ${{ needs.semantic.outputs.changelog }}
           files: |
             dist/x86_64/*.flatpak
@@ -275,7 +273,7 @@ jobs:
   publish-flathub:
     needs: [create-release, build]
     runs-on: ubuntu-latest
-    if: contains(github.ref, 'refs/tags/v') && !contains(github.ref, '-rc')
+    if: ${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-rc') }}
 
     steps:
       - name: Checkout repository
