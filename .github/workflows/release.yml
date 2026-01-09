@@ -70,6 +70,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -85,6 +86,7 @@ jobs:
             @semantic-release/github
             @semantic-release/git
             @semantic-release/exec
+            conventional-changelog-conventionalcommits
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -165,17 +167,11 @@ jobs:
           name: ${{ needs.build.outputs.artifact_name }}
           path: dist/x86_64
 
-      - name: Get version from semantic step
-        id: get_version
-        run: |
-          VERSION="${{ needs.semantic.outputs.version }}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          name: Release ${{ steps.get_version.outputs.version }}
+          tag_name: v${{ needs.semantic.outputs.version }}
+          name: Release v${{ needs.semantic.outputs.version }}
           body: ${{ needs.semantic.outputs.changelog }}
           files: |
             dist/x86_64/*.flatpak
