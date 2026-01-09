@@ -1,0 +1,70 @@
+{
+  "branches": [
+    "master",
+    {
+      "name": "beta",
+      "prerelease": true
+    },
+    {
+      "name": "dev",
+      "prerelease": true
+    }
+  ],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          "**/*.{js,css,html,txt,json,md,yaml,yml,py,sh,xml}",
+          "io.github.mall0r.Twinverse.yaml",
+          "version",
+          "CHANGELOG.md"
+        ],
+        "releasedLabels": ["Status: Released"],
+        "releasedIssues": true
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "python scripts/version_manager.py ${nextRelease.version} && echo ${nextRelease.version} | sed 's/v//' > version",
+        "publishCmd": "make flatpak && make appimage"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": ["dist/**", "*.flatpak", "*.AppImage"],
+        "releasedLabels": ["Status: Released"]
+      }
+    ]
+  ],
+  "preset": "conventionalcommits",
+  "releaseRules": [
+    {
+      "type": "feat",
+      "release": "minor"
+    },
+    {
+      "type": "fix",
+      "release": "patch"
+    },
+    {
+      "type": "breaking",
+      "release": "major"
+    },
+    {
+      "scope": "no-release",
+      "release": false
+    }
+  ],
+  "parserOpts": {
+    "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES", "breaking"]
+  }
+}

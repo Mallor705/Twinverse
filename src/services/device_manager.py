@@ -1,10 +1,12 @@
 import logging
 import re
 import subprocess
+from typing import Dict, List, Optional, Tuple, Union
+
 from screeninfo import get_monitors
-from src.models import Profile
+
 from src.core import Utils
-from typing import Dict, List, Tuple, Optional, Union
+from src.models import Profile
 
 
 class DeviceManager:
@@ -34,11 +36,7 @@ class DeviceManager:
         """
         try:
             result = subprocess.run(
-                command,
-                shell=True,
-                capture_output=True,
-                text=True,
-                check=True
+                command, shell=True, capture_output=True, text=True, check=True
             )
             return result.stdout.strip()
         except FileNotFoundError:
@@ -86,7 +84,7 @@ class DeviceManager:
         detected_devices: Dict[str, List[Dict[str, str]]] = {
             "keyboard": [],
             "mouse": [],
-            "joystick": []
+            "joystick": [],
         }
         by_id_output = self._run_command("ls -l /dev/input/by-id/")
 
@@ -116,7 +114,7 @@ class DeviceManager:
 
         for dev_type in detected_devices:
             detected_devices[dev_type] = sorted(
-                detected_devices[dev_type], key=lambda x: x['name']
+                detected_devices[dev_type], key=lambda x: x["name"]
             )
         return detected_devices
 
@@ -136,7 +134,9 @@ class DeviceManager:
         if Utils.is_flatpak():
             # When using flatpak-spawn, we need to wrap the command in `sh -c`
             flatpak_command = ["sh", "-c", command]
-            pactl_output = Utils.run_host_command(flatpak_command, capture_output=True, text=True, check=True).stdout.strip()
+            pactl_output = Utils.run_host_command(
+                flatpak_command, capture_output=True, text=True, check=True
+            ).stdout.strip()
         else:
             # _run_command uses shell=True, which handles the env var correctly.
             pactl_output = self._run_command(command)
@@ -161,21 +161,25 @@ class DeviceManager:
         if name:
             audio_sinks.append({"id": name, "name": desc or name})
 
-        return sorted(audio_sinks, key=lambda x: x['name'])
+        return sorted(audio_sinks, key=lambda x: x["name"])
 
     def get_screen_info(self) -> List[Dict[str, Union[int, bool]]]:
         monitors = []
         for i, monitor in enumerate(get_monitors()):
-            monitors.append({
-                "id": i,
-                "x": monitor.x,
-                "y": monitor.y,
-                "width": monitor.width,
-                "height": monitor.height,
-            })
+            monitors.append(
+                {
+                    "id": i,
+                    "x": monitor.x,
+                    "y": monitor.y,
+                    "width": monitor.width,
+                    "height": monitor.height,
+                }
+            )
         return monitors
 
-    def get_instance_dimensions(self, profile: Profile, instance_num: int) -> Tuple[Optional[int], Optional[int]]:
+    def get_instance_dimensions(
+        self, profile: Profile, instance_num: int
+    ) -> Tuple[Optional[int], Optional[int]]:
         """Calculates instance dimensions, accounting for splitscreen.
         For groups of up to 4 instances, the logic is repeated for each group."""
 

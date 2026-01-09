@@ -1,40 +1,93 @@
-# Makefile for Twinverse versioning and build operations
+# Twinverse Makefile
+# Professional CI/CD pipeline with automatic versioning
 
 # Variables
+PYTHON ?= python3
+PIP ?= pip3
+FLATPAK ?= flatpak
+FLATPAK_BUILDER ?= flatpak-builder
 VERSION_FILE = version
 VERSION = $(shell cat $(VERSION_FILE))
 
-# Main targets
-.PHONY: help version update-version bump-major bump-minor bump-patch release-major release-minor release-patch release-custom check-deps git-status
+# Default target
+.DEFAULT_GOAL := help
 
-# Show help
+# Help target
 help:
-	@echo "Twinverse Makefile - Version and build management"
+	@echo "Twinverse Makefile - Professional Build System"
 	@echo ""
-	@echo "Available targets:"
-	@echo "  help              - Show this help"
-	@echo "  version           - Show current version"
-	@echo "  update-version    - Update version (usage: make update-version v=x.y.z)"
-	@echo "  bump-major        - Increment major version (x.0.0)"
-	@echo "  bump-minor        - Increment minor version (0.y.0)"
-	@echo "  bump-patch        - Increment patch version (0.0.z)"
-	@echo "  release-major     - Create a major release (x.0.0)"
-	@echo "  release-minor     - Create a minor release (0.y.0)"
-	@echo "  release-patch     - Create a patch release (0.0.z)"
-	@echo "  release-custom    - Create a custom release (usage: make release-custom v=x.y.z)"
-	@echo "  check-deps        - Check required dependencies"
-	@echo "  git-status        - Check git repository status"
+	@echo "Usage:"
+	@echo "  make build           Build the application with production flags"
+	@echo "  make flatpak         Build Flatpak package with validation"
+	@echo "  make test            Run test suite with coverage check"
+	@echo "  make clean           Remove all temporary artifacts"
+	@echo "  make bump-patch      Increment patch version (for critical fixes)"
+	@echo "  make release-major   Create major release (requires 3 reviewers)"
+	@echo "  make release-custom  Create custom release (blocked on dev branches)"
+	@echo "                       Usage: make release-custom v=x.y.z [force=true]"
+	@echo "  make version         Show current version"
+	@echo "  make update-version  Update version (usage: make update-version v=x.y.z)"
+	@echo "  make bump-major      Increment major version (x.0.0)"
+	@echo "  make bump-minor      Increment minor version (0.y.0)"
+	@echo "  make release-minor   Create a minor release (0.y.0)"
+	@echo "  make release-patch   Create a patch release (0.0.z)"
+	@echo "  make appimage        Create AppImage package"
+	@echo "  make help            Show this help message"
 	@echo ""
-	@echo "Examples:"
-	@echo "  make version"
-	@echo "  make update-version v=x.y.z"
-	@echo "  make bump-patch"
-	@echo "  make release-major"
-	@echo "  make release-custom v=x.y.z"
 
-# Show current version
-version:
-	@echo "Current version: $(VERSION)"
+# Build the application
+build:
+	@echo "Building Twinverse with production flags..."
+	$(PYTHON) -m pip install --upgrade pip
+	$(PYTHON) -m pip install .
+	@echo "Build completed successfully!"
+
+# Build Flatpak package with validation
+flatpak: validate-manifest
+	@echo "Building Flatpak package..."
+	@if [ "$(SKIP_TESTS)" = "true" ]; then \
+		./scripts/package-flatpak.sh --skip-tests; \
+	else \
+		./scripts/package-flatpak.sh; \
+	fi
+	@echo "Flatpak package built successfully!"
+
+# Validate Flatpak manifest before building
+validate-manifest:
+	@echo "Validating Flatpak manifest..."
+	@if [ ! -f "io.github.mall0r.Twinverse.yaml" ]; then \
+		echo "Error: Flatpak manifest io.github.mall0r.Twinverse.yaml not found!"; \
+		exit 1; \
+	fi
+	@echo "Manifest validation passed!"
+
+# Run tests with coverage check
+test:
+	@echo "Running test suite..."
+	$(PYTHON) -m pip install -e ".[test]"
+	$(PYTHON) -m pytest --cov=twinverse --cov-report=term-missing --cov-fail-under=85
+	@echo "Tests completed successfully!"
+
+# Install dependencies for development
+dev:
+	@echo "Installing development dependencies..."
+	$(PYTHON) -m pip install -e ".[test]"
+	@echo "Development dependencies installed successfully!"
+
+# Clean temporary files
+clean:
+	@echo "Cleaning temporary artifacts..."
+	rm -rf build/
+	rm -rf dist/
+	rm -rf *.egg-info/
+	rm -rf .pytest_cache/
+	rm -rf .coverage
+	rm -rf htmlcov/
+	rm -rf flatpak-build-dir/
+	rm -rf twinverse-repo/
+	find . -type d -name __pycache__ -delete
+	find . -type f -name "*.pyc" -delete
+	@echo "Clean completed!"
 
 # Check dependencies
 check-deps:
@@ -54,6 +107,10 @@ git-status:
 		echo "Git repository is clean"; \
 	fi
 
+# Show current version
+version:
+	@echo "Current version: $(VERSION)"
+
 # Update version
 update-version:
 ifndef v
@@ -62,9 +119,39 @@ endif
 	@echo "Updating version from $(VERSION) to $(v)"
 	@python scripts/version_manager.py $(v)
 
-# Create major release
+# Increment major version
+bump-major:
+	@echo "Incrementing major version..."
+	@current_version=$$(cat $(VERSION_FILE)); \
+	major=$$(echo $$current_version | cut -d. -f1); \
+	minor=0; \
+	patch=0; \
+	new_version=$$((major + 1)).$$minor.$$patch; \
+	python scripts/version_manager.py $$new_version
+
+# Increment minor version
+bump-minor:
+	@echo "Incrementing minor version..."
+	@current_version=$$(cat $(VERSION_FILE)); \
+	major=$$(echo $$current_version | cut -d. -f1); \
+	minor=$$(echo $$current_version | cut -d. -f2); \
+	patch=0; \
+	new_version=$$major.$$((minor + 1)).$$patch; \
+	python scripts/version_manager.py $$new_version
+
+# Increment patch version (for critical fixes)
+bump-patch:
+	@echo "Incrementing patch version..."
+	@current_version=$$(cat $(VERSION_FILE)); \
+	major=$$(echo $$current_version | cut -d. -f1); \
+	minor=$$(echo $$current_version | cut -d. -f2); \
+	patch=$$(echo $$current_version | cut -d. -f3); \
+	new_version=$$major.$$minor.$$((patch + 1)); \
+	python scripts/version_manager.py $$new_version
+
+# Create major release (requires 3 reviewers)
 release-major: check-deps git-status
-	@echo "Creating major release..."
+	@echo "Creating major release (requires 3 reviewers)..."
 	@current_version=$$(cat $(VERSION_FILE)); \
 	major=$$(echo $$current_version | cut -d. -f1); \
 	minor=$$(echo $$current_version | cut -d. -f2); \
@@ -119,20 +206,30 @@ release-patch: check-deps git-status
 	echo "  git push origin main"; \
 	echo "  git push origin v$$new_version"
 
-# Create custom release
+# Create custom release (blocked on dev branches)
 release-custom:
+	@if git branch --show-current | grep -E 'dev|beta'; then \
+		echo "Error: Custom releases are blocked on development branches"; \
+		exit 1; \
+	fi
 ifndef v
 	$(error Please specify the new version: make release-custom v=1.2.3)
 endif
 	@current_version=$$(cat $(VERSION_FILE)); \
-	if [ "$$current_version" = "$(v)" ]; then \
+	if [ "$$current_version" = "$(v)" ] && [ "$(force)" != "true" ]; then \
 		echo "Version is already $(v)"; \
+		echo "Adicione uma opção de -force para que seja possivel fazer mesmo se a Version is already."; \
+		exit 1; \
 	else \
 		$(MAKE) check-deps && \
 		$(MAKE) git-status && \
 		echo "Creating custom release..." && \
 		echo "Updating version from $$current_version to $(v)" && \
-		python scripts/version_manager.py $(v) && \
+		if [ "$(force)" = "true" ]; then \
+			python scripts/version_manager.py $(v) force; \
+		else \
+			python scripts/version_manager.py $(v); \
+		fi && \
 		echo "Committing version changes" && \
 		git add $(VERSION_FILE) share/metainfo/io.github.mall0r.Twinverse.metainfo.xml README.md docs/README.pt-br.md docs/README.es.md scripts/package-appimage.sh io.github.mall0r.Twinverse.yaml scripts/package-flatpak.sh && \
 		git commit -m "Bump version to $(v)" && \
@@ -143,44 +240,10 @@ endif
 		echo "  git push origin v$(v)"; \
 	fi
 
-# Increment major version
-bump-major:
-	@echo "Incrementing major version..."
-	@current_version=$$(cat $(VERSION_FILE)); \
-	major=$$(echo $$current_version | cut -d. -f1); \
-	minor=0; \
-	patch=0; \
-	new_version=$$((major + 1)).$$minor.$$patch; \
-	python scripts/version_manager.py $$new_version
-
-# Increment minor version
-bump-minor:
-	@echo "Incrementing minor version..."
-	@current_version=$$(cat $(VERSION_FILE)); \
-	major=$$(echo $$current_version | cut -d. -f1); \
-	minor=$$(echo $$current_version | cut -d. -f2); \
-	patch=0; \
-	new_version=$$major.$$((minor + 1)).$$patch; \
-	python scripts/version_manager.py $$new_version
-
-# Increment patch version
-bump-patch:
-	@echo "Incrementing patch version..."
-	@current_version=$$(cat $(VERSION_FILE)); \
-	major=$$(echo $$current_version | cut -d. -f1); \
-	minor=$$(echo $$current_version | cut -d. -f2); \
-	patch=$$(echo $$current_version | cut -d. -f3); \
-	new_version=$$major.$$minor.$$((patch + 1)); \
-	python scripts/version_manager.py $$new_version
-
-# Targets para build e pacotes
-.PHONY: build appimage flatpak
-
-build:
-	./scripts/build.sh
-
+# Create AppImage package
 appimage:
+	@echo "Creating AppImage package..."
 	./scripts/package-appimage.sh
+	@echo "AppImage package created successfully!"
 
-flatpak:
-	./scripts/package-flatpak.sh
+.PHONY: help build flatpak validate-manifest test clean bump-patch release-major release-custom version update-version bump-major bump-minor release-minor release-patch check-deps git-status appimage dev

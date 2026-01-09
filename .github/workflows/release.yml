@@ -1,0 +1,238 @@
+name: Flatpak Release Pipeline
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*.*.*'           # Dispara para tags no formato v1.2.3
+      - '!v*.*.*-rc*'      # Ignora release candidates
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versão específica (ex: v1.2.3)'
+        required: true
+        default: 'v0.0.0'
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  # Fase 1: Análise estática e linting
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgirepository1.0-dev \
+            libgirepository-2.0-dev \
+            make \
+            gcc \
+            libcairo2-dev \
+            pkg-config \
+            python3-dev \
+            libglib2.0-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libgtk-4-dev \
+            libadwaita-1-dev \
+            gir1.2-gtk-4.0 \
+            gir1.2-adw-1 \
+            libglib2.0-dev-bin
+
+      - name: Install dependencies
+        run: |
+          pip install pre-commit
+          pre-commit install
+          pip install .[test]
+
+      - name: Run static analysis
+        run: pre-commit run --all-files
+
+  # Fase 2: Build multi-arquitetura
+  build:
+    needs: analyze
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU for emulation
+        if: matrix.arch == 'aarch64'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Install Flatpak dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak \
+          flatpak-builder \
+          libgirepository1.0-dev \
+          libgirepository-2.0-dev \
+          make \
+          gcc \
+          libcairo2-dev \
+          pkg-config \
+          python3-dev \
+          libglib2.0-dev \
+          libxml2-dev \
+          libxslt1-dev \
+          libgtk-4-dev \
+          libadwaita-1-dev \
+          gir1.2-gtk-4.0 \
+          gir1.2-adw-1 \
+          libglib2.0-dev-bin
+          pip install pytest
+
+      - name: Add Flathub repository
+        run: |
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Install SDK and Platform
+        run: |
+          flatpak install -y --user flathub org.freedesktop.Platform//22.08 org.freedesktop.Sdk//22.08
+
+      - name: Build Flatpak
+        run: make flatpak ARCH=${{ matrix.arch }} SKIP_TESTS=true
+        env:
+          FLATPAK_ARCH: ${{ matrix.arch }}
+
+      - name: Run tests
+        run: |
+          flatpak-builder --run build-dir io.github.mall0r.Twinverse.yaml \
+            pip install .[test] && make test
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: flatpak-${{ matrix.arch }}-${{ github.ref_name || github.sha }}
+          path: |
+            build-dir/*.flatpak
+            build-dir/*.json
+
+  # Fase 3: Versionamento semântico automático
+  semantic-version:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      changelog: ${{ steps.version.outputs.changelog }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            # Usar semantic-release para determinar versão automaticamente
+            npm install -g semantic-release @semantic-release/git @semantic-release/github
+            VERSION=$(semantic-release --dry-run --no-ci | grep 'Published release' | awk '{print $3}')
+            if [ -z "$VERSION" ]; then
+              VERSION="v0.0.0-$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::7}"
+            fi
+          fi
+
+          # Gerar changelog
+          if [ -f CHANGELOG.md ]; then
+            CHANGELOG=$(head -10 CHANGELOG.md | sed 's/"/\\"/g')
+          else
+            CHANGELOG="Release automático - $VERSION"
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "changelog=$CHANGELOG" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+
+      - name: Create version tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag -a ${{ env.version }} -m "Release ${{ env.version }}"
+          git push origin ${{ env.version }}
+
+  # Fase 4: Criar release no GitHub
+  create-release:
+    needs: [semantic-version, build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v6
+        with:
+          name: flatpak-x86_64-${{ needs.semantic-version.outputs.version }}
+          path: dist/x86_64
+
+      - name: Download ARM64 artifacts
+        uses: actions/download-artifact@v6
+        with:
+          name: flatpak-aarch64-${{ needs.semantic-version.outputs.version }}
+          path: dist/aarch64
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.semantic-version.outputs.version }}
+          name: Release ${{ needs.semantic-version.outputs.version }}
+          body: ${{ needs.semantic-version.outputs.changelog }}
+          files: |
+            dist/x86_64/*.flatpak
+            dist/aarch64/*.flatpak
+            dist/x86_64/*.json
+            dist/aarch64/*.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Fase 5: Publicar no Flathub (requer permissão)
+  publish-flathub:
+    needs: create-release
+    runs-on: ubuntu-latest
+    if: contains(github.ref, 'refs/tags/v') && !contains(github.ref, '-rc')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Flatpak Builder
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: build-aux/flatpak/io.github.mall0r.Twinverse.yaml
+
+      - name: Submit to Flathub
+        env:
+          FLATHUB_TOKEN: ${{ secrets.FLATHUB_TOKEN }}
+        run: |
+          # Este passo requer configuração prévia no Flathub

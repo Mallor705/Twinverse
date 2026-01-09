@@ -1,0 +1,86 @@
+name: CI/CD Tests
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+  release:
+    types: [published]
+
+jobs:
+  # Testes normais que rodam diretamente no Ubuntu
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install .[test]
+
+      - name: Run tests
+        run: |
+          python -m pytest tests/
+
+  # Testes específicos do Flatpak
+  flatpak-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-49
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install flatpak and dependencies
+        run: |
+          apt-get update
+          apt-get install -y flatpak flatpak-builder
+
+      - name: Install GNOME runtime and SDK
+        run: |
+          flatpak install -y flathub org.gnome.Sdk//49 org.gnome.Platform//49
+
+      - name: Build Flatpak and run tests
+        run: |
+          flatpak-builder --install-deps-from=flathub --force-clean build-dir io.github.mall0r.Twinverse.yaml
+          flatpak-builder --run build-dir io.github.mall0r.Twinverse.yaml python -m pytest tests/
+
+  # Fase de entrega contínua - executada apenas em releases
+  deploy:
+    needs: [unit-tests, flatpak-tests]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          pip install .
+
+      - name: Build application
+        run: |
+          make build
+
+      - name: Create Flatpak package
+        run: |
+          make flatpak
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: application-build
+          path: |
+            build-dir/
+            *.flatpak

@@ -9,13 +9,13 @@ when a new version is defined.
 import os
 import re
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 
 def update_version_in_file(file_path, old_version, new_version):
     """Updates the version in a specific file."""
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     # Specific replacements for different version formats
@@ -24,30 +24,28 @@ def update_version_in_file(file_path, old_version, new_version):
     # Update version in "x.y.z" format
     updated_content = re.sub(
         rf'(["\']){re.escape(old_version)}(["\'])',
-        rf'\g<1>{new_version}\g<2>',
-        updated_content
+        rf"\g<1>{new_version}\g<2>",
+        updated_content,
     )
 
     # Update version in date format in metainfo.xml
-    if 'metainfo.xml' in str(file_path):
-        current_date = datetime.now().strftime('%Y-%m-%d')
+    if "metainfo.xml" in str(file_path):
+        current_date = datetime.now().strftime("%Y-%m-%d")
         # Update release date in metainfo.xml
         updated_content = re.sub(
             r'<release version="[^"]+" date="[^"]+">',
             f'<release version="{new_version}" date="{current_date}">',
-            updated_content
+            updated_content,
         )
 
     # Update version badge in README
-    if 'README' in str(file_path):
+    if "README" in str(file_path):
         updated_content = re.sub(
-            r'Version-[0-9]+\.[0-9]+\.[0-9]+',
-            f'Version-{new_version}',
-            updated_content
+            r"Version-[0-9]+\.[0-9]+\.[0-9]+", f"Version-{new_version}", updated_content
         )
 
     if content != updated_content:
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             f.write(updated_content)
         print(f"✓ Updated: {file_path}")
         return True
@@ -59,7 +57,7 @@ def get_current_version():
     """Gets the current version from the version file."""
     version_file = Path("version")
     if version_file.exists():
-        with open(version_file, 'r', encoding='utf-8') as f:
+        with open(version_file, "r", encoding="utf-8") as f:
             return f.read().strip()
     return None
 
@@ -77,7 +75,7 @@ def set_new_version(new_version):
         return True
 
     # Update the version file
-    with open("version", 'w', encoding='utf-8') as f:
+    with open("version", "w", encoding="utf-8") as f:
         f.write(new_version)
 
     print(f"Updating version from {old_version} to {new_version}")
@@ -101,7 +99,6 @@ def set_new_version(new_version):
             if update_version_in_file(file_obj, old_version, new_version):
                 updated_files.append(file_path)
 
-
     print(f"\n✓ Version updated successfully from {old_version} to {new_version}")
     print(f"Files updated: {len(updated_files)}")
     for file in updated_files:
@@ -124,7 +121,7 @@ def main():
     new_version = sys.argv[1]
 
     # Validate version format (x.y.z)
-    version_pattern = r'^[0-9]+\.[0-9]+\.[0-9]+$'
+    version_pattern = r"^[0-9]+\.[0-9]+\.[0-9]+$"
     if not re.match(version_pattern, new_version):
         print(f"Error: Invalid version format. Use x.y.z format (e.g., 1.0.0)")
         return 1

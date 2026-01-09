@@ -1,21 +1,19 @@
 import sys
 import threading
 import time
-import gi
 from pathlib import Path
+
+import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
-from src.core import Config
-from src.core import VirtualDeviceError
-from src.core import Logger
-from src.core import Utils
-from src.models import Profile
-from src.services import InstanceService
-from src.services import KdeManager
+
+from src.core import Config, Logger, Utils, VirtualDeviceError
 from src.gui.layout_editor import LayoutSettingsPage
+from src.models import Profile
+from src.services import InstanceService, KdeManager
 
 
 class TwinverseWindow(Adw.ApplicationWindow):
@@ -27,7 +25,9 @@ class TwinverseWindow(Adw.ApplicationWindow):
         self.logger = Logger("Twinverse-GUI", Config.LOG_DIR, reset=True)
         self.profile = Profile.load()
         self.kde_manager = KdeManager(self.logger)
-        self.instance_service = InstanceService(logger=self.logger, kde_manager=self.kde_manager)
+        self.instance_service = InstanceService(
+            logger=self.logger, kde_manager=self.kde_manager
+        )
         self._launch_thread = None
         self._cancel_launch_event = threading.Event()
         self._is_running = False
@@ -37,7 +37,9 @@ class TwinverseWindow(Adw.ApplicationWindow):
         self.connect("close-request", self.on_close_request)
 
     def _show_error_dialog(self, message):
-        dialog = Adw.MessageDialog(transient_for=self, modal=True, title="Error", body=message)
+        dialog = Adw.MessageDialog(
+            transient_for=self, modal=True, title="Error", body=message
+        )
         dialog.add_response("ok", "OK")
         dialog.present()
 
@@ -52,7 +54,9 @@ class TwinverseWindow(Adw.ApplicationWindow):
 
         self.layout_settings_page = LayoutSettingsPage(self.profile, self.logger)
         self.layout_settings_page.connect("settings-changed", self._trigger_auto_save)
-        self.layout_settings_page.connect("verification-completed", self._update_launch_button_state)
+        self.layout_settings_page.connect(
+            "verification-completed", self._update_launch_button_state
+        )
         self.toolbar_view.set_content(self.layout_settings_page)
 
         # Footer Bar for Play/Stop buttons - Agora uma caixa comum
@@ -64,7 +68,7 @@ class TwinverseWindow(Adw.ApplicationWindow):
             margin_top=6,
             margin_bottom=6,
             homogeneous=False,
-            halign=Gtk.Align.END  # Alinha tudo à direita
+            halign=Gtk.Align.END,  # Alinha tudo à direita
         )
 
         # Adiciona um "spacer" expansível para empurrar o botão para direita
@@ -87,7 +91,7 @@ class TwinverseWindow(Adw.ApplicationWindow):
             spacing=6,
             hexpand=False,
             halign=Gtk.Align.CENTER,
-            valign=Gtk.Align.CENTER
+            valign=Gtk.Align.CENTER,
         )
         self.launch_content_box.append(self.launch_label)
 
@@ -115,7 +119,6 @@ class TwinverseWindow(Adw.ApplicationWindow):
             for p in selected_players
         )
         self.launch_button.set_sensitive(all_verified)
-
 
     def _launch_worker(self):
         selected_players = self.profile.selected_players
@@ -270,6 +273,7 @@ class TwinverseApplication(Adw.Application):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
             )
         self.win.present()
+
 
 def run_gui():
     """Launches the GUI application."""
