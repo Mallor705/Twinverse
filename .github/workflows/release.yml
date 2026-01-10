@@ -22,7 +22,6 @@ jobs:
   # Fase 2: Versionamento semântico automático
   semantic-release:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     outputs:
       version: ${{ steps.release.outputs.new_release_version || '1.0.0' }}
       changelog: ${{ steps.release.outputs.new_release_notes || 'Initial release' }}
