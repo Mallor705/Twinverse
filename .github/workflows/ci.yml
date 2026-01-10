@@ -42,6 +42,7 @@ jobs:
       - name: Add Flathub repository
         run: |
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Install GNOME runtime and SDK
         run: |
