@@ -45,7 +45,7 @@ jobs:
 
       - name: Install GNOME runtime and SDK
         run: |
-          flatpak install -y flathub org.gnome.Sdk//49 org.gnome.Platform//49
+          flatpak install -y --user flathub org.gnome.Sdk//49 org.gnome.Platform//49
 
       - name: Install pip dependencies
         run: |
