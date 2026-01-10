@@ -18,6 +18,26 @@ jobs:
         with:
           python-version: '3.13'
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgirepository1.0-dev \
+            libgirepository-2.0-dev \
+            make \
+            gcc \
+            libcairo2-dev \
+            pkg-config \
+            python3-dev \
+            libglib2.0-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libgtk-4-dev \
+            libadwaita-1-dev \
+            gir1.2-gtk-4.0 \
+            gir1.2-adw-1 \
+            libglib2.0-dev-bin
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
@@ -37,8 +57,24 @@ jobs:
 
       - name: Install flatpak and dependencies
         run: |
-          apt-get update
-          apt-get install -y flatpak flatpak-builder
+          sudo apt-get update
+          sudo apt-get install -y flatpak \
+          flatpak-builder \
+          libgirepository1.0-dev \
+          libgirepository-2.0-dev \
+          make \
+          gcc \
+          libcairo2-dev \
+          pkg-config \
+          python3-dev \
+          libglib2.0-dev \
+          libxml2-dev \
+          libxslt1-dev \
+          libgtk-4-dev \
+          libadwaita-1-dev \
+          gir1.2-gtk-4.0 \
+          gir1.2-adw-1 \
+          libglib2.0-dev-bin
 
       - name: Install GNOME runtime and SDK
         run: |
